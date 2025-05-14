@@ -6,15 +6,7 @@ import {
   Table,
   TableHeader,
 } from "@chakra-ui/react";
-
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: "credit" | "debit";
-  category: string;
-}
+import { Transaction } from "../_types/transaction";
 
 const TransactionsList = ({
   transactions,
