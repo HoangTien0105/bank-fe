@@ -1,9 +1,9 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
 const Page = () => {
   return (
     <Box>
-      <h1>Welcome to TienDaDen bank</h1>
+      <Heading size="2xl">Welcome to TienDaDen bank</Heading>
     </Box>
   );
 };
