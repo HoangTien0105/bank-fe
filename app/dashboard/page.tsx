@@ -9,6 +9,8 @@ import { UserProfile } from "./_types/user";
 import { BankAccount } from "./_types/bankAccount";
 import { Transaction } from "./_types/transaction";
 import { useAuth } from "@/contexts/auth-context";
+import { useState } from "react";
+import Navigation from "@/components/common/Navigation";
 
 const mockUserProfile: UserProfile = {
   id: "user-001",
@@ -89,74 +91,32 @@ const mockTransactions: Transaction[] = [
 
 const Page = () => {
   const { logout } = useAuth();
+  const [menuItems, setMenuItems] = useState([
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: <LuUser />,
+      children: <Profile profile={mockUserProfile} />
+    },
+    {
+      id: 'bank-accounts',
+      label: 'Bank Accounts',
+      icon: <LuBanknote />,
+      children: <BankAccountsList bankAccounts={mockBankAccounts} />
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      icon: <LuList />,
+      children: <TransactionsList transactions={mockTransactions} />
+    }
+  ]);
+
+
   return (
     <Box p={6} height="100vh" position="relative">
       <Heading mb={4}>Dashboard</Heading>
-      <Tabs.Root
-        orientation="vertical"
-        defaultValue="profile"
-        overflowY="hidden"
-        height="calc(100vh - 100px)"
-      >
-        <Tabs.List height="100%">
-          <Tabs.Trigger value="profile">
-            <LuUser />
-            Profile
-          </Tabs.Trigger>
-
-          <Tabs.Trigger value="bank-accounts">
-            <LuBanknote />
-            Bank Accounts
-          </Tabs.Trigger>
-
-          <Tabs.Trigger value="transactions">
-            <LuList />
-            Transactions
-          </Tabs.Trigger>
-
-          <Tabs.Indicator bg="bg.muted" rounded="l3" p="1" />
-
-          <Box mt="auto" position="absolute" bottom="4" left="4" right="4">
-            <Menu.Root positioning={{ placement: "top-start" }}>
-              <Menu.Trigger asChild>
-                <Button variant="outline" size="sm">
-                  Open menu
-                </Button>
-              </Menu.Trigger>
-              <Portal>
-                <Menu.Positioner>
-                  <Menu.Content>
-                    <Menu.Item
-                      value="logout"
-                      color="fg.error"
-                      _hover={{ bg: "bg.error", color: "fg.error" }}
-                      onSelect={async () => {
-                        try {
-                          await logout();
-                        } catch (error) {
-                          console.error('Logout error:', error);
-                        }
-                      }}
-                    >
-                      Logout
-                    </Menu.Item>
-                  </Menu.Content>
-                </Menu.Positioner>
-              </Portal>
-            </Menu.Root>
-          </Box>
-        </Tabs.List>
-
-        <Tabs.Content value="profile">
-          <Profile profile={mockUserProfile} />{" "}
-        </Tabs.Content>
-        <Tabs.Content value="bank-accounts">
-          <BankAccountsList bankAccounts={mockBankAccounts} />
-        </Tabs.Content>
-        <Tabs.Content value="transactions">
-          <TransactionsList transactions={mockTransactions} />
-        </Tabs.Content>
-      </Tabs.Root>
+      <Navigation items={menuItems}/>
     </Box>
   );
 };
