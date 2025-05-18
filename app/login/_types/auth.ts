@@ -13,3 +13,5 @@ export interface ApiResponse<T> {
 }
 
 export interface LoginResponse extends ApiResponse<Token> {}
+
+export interface LogoutResponse extends ApiResponse<void> {}
