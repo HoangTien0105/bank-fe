@@ -2,7 +2,20 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { login } from "./api/auth";
 
+enum UserRole {
+  ADMIN = "ADMIN",
+  CUSTOMER = "CUSTOMER"
+}
+
+const ROLE_REDIRECTS: Record<UserRole, String> = {
+  [UserRole.ADMIN]: "/dashboard",
+  [UserRole.CUSTOMER]: "/customer/dashboard"
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
@@ -48,5 +61,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user = token as any;
       return session;
     },
+
+    // async redirect({url , baseUrl}) {
+    //   //Nếu đã đăng nhập, điều hướng theo role
+    //   const session = await auth();
+    //   if(session?.user?.role){
+    //     const userRole = session.user.role as UserRole;
+    //     if(Object.values(UserRole).includes(userRole)){
+    //       const roleRedirect = ROLE_REDIRECTS[userRole];
+    //       return `${baseUrl}${roleRedirect}`;
+    //     }
+    //   }
+
+    //   return `${baseUrl}/dashboard`;
+    // }
   },
 });

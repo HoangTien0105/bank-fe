@@ -12,7 +12,7 @@ import {
   Image,
   Fieldset,
 } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -71,7 +71,18 @@ const LoginForm = ({
         onLoginSucess(result);
       }
 
-      router.push("/dashboard");
+      const session = await getSession();
+      if (session?.user) {
+        if (session?.user) {
+          if (session.user.role === 'ADMIN') {
+            router.push("/dashboard");
+          } else if (session.user.role === 'CUSTOMER') {
+            router.push('/customer/dashboard');
+          } else {
+            router.push('/login'); // Fallback
+          }
+        }
+      }
     } catch (error) {
       console.error("Login error: ", error);
 

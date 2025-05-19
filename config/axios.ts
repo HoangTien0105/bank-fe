@@ -45,6 +45,7 @@ axiosInstance.interceptors.response.use(
     // Lưu lại request gốc để thực hiện lại sau khi refresh token
     const originalRequest = error.config as InternalAxiosRequestConfig;
 
+    // Thêm flag để tránh vòng lặp vô hạn
     if (
       error.response?.status === 401 &&
       !originalRequest?.url?.includes("/auth/refresh-token")
