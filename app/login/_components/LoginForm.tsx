@@ -1,6 +1,5 @@
-"use client";
+"use client"
 
-import { loginApi } from "@/api/auth";
 import { PasswordInput } from "@/components/ui/password-input";
 import { toaster } from "@/components/ui/toaster";
 import {
@@ -13,6 +12,7 @@ import {
   Image,
   Fieldset,
 } from "@chakra-ui/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,7 +32,7 @@ interface LoginFormProps {
 const LoginForm = ({
   onLoginSucess,
   onLoginError,
-  isLoading : externalLoading = false,
+  isLoading: externalLoading = false,
   defaultValues,
 }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(externalLoading);
@@ -51,38 +51,44 @@ const LoginForm = ({
       setIsLoading(true);
 
       //Gọi API đăng nhập từ service
-      const tokenData = await loginApi(data.username, data.password);
-
-      //Lưu token vào storage
-      localStorage.setItem('auth_token', JSON.stringify(tokenData));
-
-      //Hiển thị thông báo thành công
-      toaster.success({
-        title: "Login success",
-        duration: 3000,
-        closable: true
+      const result = await signIn("credentials", {
+        username: data.username,
+        password: data.password,
+        redirect: false,
       });
 
-      //Gọi callback nếu có
-      if(onLoginSucess){
-        onLoginSucess(tokenData)
+      //Hiển thị thông báo thành công
+      if (!result?.error) {
+        toaster.success({
+          title: "Login success",
+          duration: 3000,
+          closable: true,
+        });
       }
 
-      router.push('/dashboard');
+      //Gọi callback nếu có
+      if (onLoginSucess) {
+        onLoginSucess(result);
+      }
+
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login error: ", error);
 
       toaster.error({
-        title:"Login failed",
-        description: error instanceof Error ? error.message : "Please review your information",
+        title: "Login failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please review your information",
         duration: 3000,
         closable: true,
-      })
+      });
 
-      if(onLoginError && error instanceof Error) {
+      if (onLoginError && error instanceof Error) {
         onLoginError(error);
       }
-    } finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -94,10 +100,7 @@ const LoginForm = ({
             Sign in to your account
           </Heading>
 
-          <Fieldset.Root
-            className="mb-6"
-            invalid={!!errors.username}
-          >
+          <Fieldset.Root className="mb-6" invalid={!!errors.username}>
             <Fieldset.Legend>Email / Phone number</Fieldset.Legend>
             <Input
               type="email"
@@ -135,18 +138,6 @@ const LoginForm = ({
           >
             Sign in
           </Button>
-          <Button
-  onClick={() => {
-    toaster.error({
-      title: "Test Error",
-      description: "This is a test error message",
-      duration: 3000,
-      closable: true,
-    });
-  }}
->
-  Test Error Toast
-</Button>
         </Flex>
         <Flex className="flex-1 hidden md:block caret-transparent">
           <Image

@@ -30,8 +30,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
+    async jwt({ token, user, trigger, session }) {
+      // Khi đăng nhập lần đầu
+      if (user) {
+        return { ...token, ...user };
+      }
+
+      // Khi gọi update session
+      if (trigger === "update" && session) {
+        return { ...token, ...session };
+      }
+
+      return token;
     },
 
     async session({ session, token }) {
