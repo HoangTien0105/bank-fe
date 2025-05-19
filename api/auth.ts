@@ -4,7 +4,7 @@ import { BASE_API_URL } from "@/constant/api";
 
 export async function loginApi(
   username: string,
-  password: string,
+  password: string
 ): Promise<Token> {
   try {
     const response = await fetch(`${BASE_API_URL}/auth/login`, {
@@ -38,12 +38,8 @@ export const login = async (payload: {
 }) => {
   try {
     const response = await axiosInstance.post("/auth/login", payload);
-    console.log("Response data:", response.data);
     return response.data;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Login failed");
-  }
+  } catch {}
 };
 export async function logoutApi(): Promise<void> {
   try {
@@ -69,3 +65,8 @@ export async function logoutApi(): Promise<void> {
     throw error;
   }
 }
+
+export const me = async () => {
+  const response = await axiosInstance.get("/auth/me");
+  return response.data;
+};
