@@ -1,4 +1,4 @@
-import { LoginResponse, Token } from "@/app/login/_types/auth";
+import { LoginResponse, LogoutResponse, Token } from "@/app/login/_types/auth";
 import axiosInstance from "@/config/axios";
 import { BASE_API_URL } from "@/constant/api";
 
@@ -45,3 +45,27 @@ export const login = async (payload: {
     throw new Error("Login failed");
   }
 };
+export async function logoutApi(): Promise<void> {
+  try {
+    const token = localStorage.getItem("auth_token");
+    if (!token) throw new Error("No authentication token found");
+
+    const { accessToken } = JSON.parse(token);
+    const response = await fetch(`${BASE_API_URL}/api/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data: LogoutResponse = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || "Logout failed");
+    }
+  } catch (error) {
+    console.error("Logout API error: ", error);
+    throw error;
+  }
+}

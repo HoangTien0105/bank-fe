@@ -45,7 +45,7 @@ const Page = async () => {
   const allTransactionsResponse = await getAllTransactions();
 
   return (
-    <Box p={6}>
+    <Box p={6} height="100vh" position="relative">
       <Heading mb={4}>Dashboard</Heading>
       <Tabs.Root orientation="vertical" defaultValue="profile">
         <Tabs.List>
