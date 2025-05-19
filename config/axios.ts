@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { BASE_API_URL } from "@/constant/api";
 import { updateSession } from "@/utils/session";
 import axios, { Axios, AxiosError, InternalAxiosRequestConfig } from "axios";
-import { signOut } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 const timeoutDuration = 60 * 1000;
 
@@ -21,9 +21,19 @@ axiosInstance.interceptors.request.use(
       return config;
     }
 
-    const session = await auth();
+    //Kiểm tra môi trường
+    const isServer = typeof window === 'undefined';
+    let session;
+
+    if (isServer) {
+      session = await auth();
+    } else {
+      session = await getSession();
+    }
 
     const user = session?.user;
+
+    console.log(user);
 
     if (user) {
       config.headers.setAuthorization(`Bearer ${user.accessToken}`);
@@ -80,9 +90,11 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Nếu refresh token thất bại, đăng xuất user
-        // return Promise.reject(
-        //   new Error("Authentication failed. Please login again.")
-        // );
+        console.log(refreshError);
+         await signOut({
+          redirect: true,
+          callbackUrl: "/login"
+        });
       }
     }
     return Promise.reject(error);

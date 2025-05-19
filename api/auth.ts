@@ -1,7 +1,6 @@
 import { LoginResponse, LogoutResponse, Token } from "@/app/login/_types/auth";
 import axiosInstance from "@/config/axios";
 import { BASE_API_URL } from "@/constant/api";
-import { AxiosError } from "axios";
 
 export async function loginApi(
   username: string,
@@ -66,3 +65,8 @@ export async function logoutApi(): Promise<void> {
     throw error;
   }
 }
+
+export const me = async () => {
+  const response = await axiosInstance.get("/auth/me");
+  return response.data;
+};

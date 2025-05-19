@@ -13,14 +13,15 @@ interface NavigationProps {
   items: MenuItem[];
   defaultValue?: string;
   onMenuItemClick?: (item: MenuItem) => void;
+  renderContent: (itemId: string) => ReactNode;
 }
 
 const Navigation = ({
   items = [],
   defaultValue = "profile",
   onMenuItemClick,
+  renderContent,
 }: NavigationProps) => {
-
   return (
     <Tabs.Root
       orientation="vertical"
@@ -60,7 +61,7 @@ const Navigation = ({
                       try {
                         await signOut();
                       } catch (error) {
-                        console.error('Logout error:', error);
+                        console.error("Logout error:", error);
                       }
                     }}
                   >
@@ -72,9 +73,9 @@ const Navigation = ({
           </Menu.Root>
         </Box>
       </Tabs.List>
-      {items.map(item => (
+      {items.map((item) => (
         <Tabs.Content key={item.id} value={item.id}>
-          {item.children}
+          {renderContent(item.id)}
         </Tabs.Content>
       ))}
     </Tabs.Root>
