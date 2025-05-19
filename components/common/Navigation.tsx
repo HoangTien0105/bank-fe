@@ -1,5 +1,5 @@
-import { useAuth } from "@/contexts/auth-context";
 import { Box, Button, Menu, Portal, Tabs } from "@chakra-ui/react";
+import { signOut } from "next-auth/react";
 import { ReactNode } from "react";
 
 interface MenuItem {
@@ -20,7 +20,6 @@ const Navigation = ({
   defaultValue = "profile",
   onMenuItemClick,
 }: NavigationProps) => {
-  const { logout } = useAuth();
 
   return (
     <Tabs.Root
@@ -59,7 +58,7 @@ const Navigation = ({
                     _hover={{ bg: "bg.error", color: "fg.error" }}
                     onSelect={async () => {
                       try {
-                        await logout();
+                        await signOut();
                       } catch (error) {
                         console.error('Logout error:', error);
                       }

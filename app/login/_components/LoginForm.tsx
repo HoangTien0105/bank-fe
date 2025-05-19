@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { PasswordInput } from "@/components/ui/password-input";
 import { toaster } from "@/components/ui/toaster";
@@ -23,15 +23,11 @@ interface LoginForm {
 }
 
 interface LoginFormProps {
-  onLoginSucess?: (data: any) => void;
-  onLoginError?: (error: Error) => void;
   isLoading?: boolean;
   defaultValues?: Partial<LoginForm>;
 }
 
 const LoginForm = ({
-  onLoginSucess,
-  onLoginError,
   isLoading: externalLoading = false,
   defaultValues,
 }: LoginFormProps) => {
@@ -57,6 +53,16 @@ const LoginForm = ({
         redirect: false,
       });
 
+      if (result?.error) {
+        toaster.error({
+          title: "Login failed",
+          description: "Please review your information",
+          duration: 3000,
+          closable: true,
+        });
+        return;
+      }
+
       //Hiển thị thông báo thành công
       if (!result?.error) {
         toaster.success({
@@ -65,27 +71,7 @@ const LoginForm = ({
           closable: true,
         });
       }
-
-      //Gọi callback nếu có
-      if (onLoginSucess) {
-        onLoginSucess(result);
-      }
-
-      const session = await getSession();
-      if (session?.user) {
-        if (session?.user) {
-          if (session.user.role === 'ADMIN') {
-            router.push("/dashboard");
-          } else if (session.user.role === 'CUSTOMER') {
-            router.push('/customer/dashboard');
-          } else {
-            router.push('/login'); // Fallback
-          }
-        }
-      }
     } catch (error) {
-      console.error("Login error: ", error);
-
       toaster.error({
         title: "Login failed",
         description:
@@ -95,10 +81,6 @@ const LoginForm = ({
         duration: 3000,
         closable: true,
       });
-
-      if (onLoginError && error instanceof Error) {
-        onLoginError(error);
-      }
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +96,7 @@ const LoginForm = ({
           <Fieldset.Root className="mb-6" invalid={!!errors.username}>
             <Fieldset.Legend>Email / Phone number</Fieldset.Legend>
             <Input
-              type="email"
+              type="text"
               disabled={isLoading}
               className={errors.username ? "border border-[#f87171]" : ""}
               placeholder="Enter your email or phone number"

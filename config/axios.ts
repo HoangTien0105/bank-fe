@@ -80,9 +80,9 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Nếu refresh token thất bại, đăng xuất user
-        return Promise.reject(
-          new Error("Authentication failed. Please login again.")
-        );
+        // return Promise.reject(
+        //   new Error("Authentication failed. Please login again.")
+        // );
       }
     }
     return Promise.reject(error);
