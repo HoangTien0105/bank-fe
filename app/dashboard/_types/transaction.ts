@@ -1,8 +1,10 @@
 export interface Transaction {
   id: string;
-  date: string;
-  description: string;
+  type: string;
   amount: number;
-  type: "credit" | "debit";
-  category: string;
+  transactionDate: string;
+  fee: any;
+  location: string;
+  description: string;
+  createDate: string;
 }
