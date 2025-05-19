@@ -1,8 +1,10 @@
 import { getUser, updateUser } from "@/api/test";
 import { Box, Button, Text } from "@chakra-ui/react";
+import { revalidatePath } from "next/cache";
 
 const TestPage = async ({ params }: { params: { userId: string } }) => {
-  const user = await getUser(params.userId);
+  const { userId } = await params;
+  const user = await getUser(userId);
 
   return (
     <Box>
@@ -10,16 +12,19 @@ const TestPage = async ({ params }: { params: { userId: string } }) => {
       <form
         action={async (formData: FormData) => {
           "use server";
+          console.log("Formdata", formData);
           const newName = formData.get("name") as string;
-          await updateUser(params.userId, newName);
+          await updateUser(userId, newName);
+          revalidatePath(`/test/${userId}`);
         }}
       >
         <input
-          className="bg-white text-black-400 border-gray-500 mx-2"
+          className="text-white border border-gray-500 mx-2"
+          placeholder="Your name"
           type="text"
           name="name"
         />
-        <Button colorPalette="blue" className="mx-2">
+        <Button type="submit" colorPalette="blue" className="mx-2">
           Submit
         </Button>
       </form>
