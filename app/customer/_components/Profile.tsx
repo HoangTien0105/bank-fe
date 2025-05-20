@@ -9,7 +9,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { CustomerProfile } from "../_types/customer";
+import { CustomerProfile } from "../../../types/customer";
 import { formatDate } from "@/utils/date";
 
 interface ProfileProps {
@@ -18,7 +18,7 @@ interface ProfileProps {
 
 const Profile = ({ profile }: ProfileProps) => {
   return (
-    <Box w="full" maxW="4xl" margin="auto">
+    <Box w="full" maxW="4xl">
       <VStack>
         <Flex
           w="full"

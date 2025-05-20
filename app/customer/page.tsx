@@ -4,9 +4,10 @@ import Navigation from "@/components/common/Navigation";
 import { useEffect, useState } from "react";
 import { LuBanknote, LuList, LuUser } from "react-icons/lu";
 import Profile from "./_components/Profile";
-import { CustomerProfile as ICustomerProfile } from "./_types/customer";
+import { CustomerProfile as ICustomerProfile } from "../../types/customer";
 import { me } from "@/api/auth";
 import { toaster } from "@/components/ui/toaster";
+import TransactionsList from "@/components/common/TransactionsList";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -85,15 +86,13 @@ const Page = () => {
   const renderContent = (itemId: string, data: any) => {
     switch (itemId) {
       case "profile":
-        return (
-          <Profile
-            profile={data?.profile}
-          />
-        );
+        return <Profile profile={data?.profile} />;
       case "bank-accounts":
         return <div>Bank Accounts Content</div>;
       case "transactions":
-        return <div>Transactions Content</div>;
+        return (
+          <TransactionsList customerId={data?.customerId} variant="customer" />
+        );
       default:
         return null;
     }
