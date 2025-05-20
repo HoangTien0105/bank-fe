@@ -1,77 +1,176 @@
-"use client"
-
-import { Avatar, Badge, Box, Button, Card, CardBody, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Card,
+  CardBody,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { CustomerProfile } from "../_types/customer";
-import { useEffect } from "react";
+import { formatDate } from "@/utils/date";
 
-
-interface CustomerProfileProps {
-  profile: CustomerProfile;
+interface ProfileProps {
+  profile: CustomerProfile | null;
 }
 
-const Profile = ({profile}: CustomerProfileProps) => {
-   useEffect(() => {
-        console.log('Profile data changed:', profile);
-        // Có thể thêm logic cập nhật state nội bộ nếu cần
-    }, [profile]); // Chạy lại khi profile thay đổi
-
-    return(
-    <Box p={6} w="full">
+const Profile = ({ profile }: ProfileProps) => {
+  return (
+    <Box w="full" maxW="4xl" margin="auto">
       <VStack>
-        <Flex w="full" alignItems="center" gap={4}>
-          <Avatar.Root>
+        <Flex
+          w="full"
+          alignItems="center"
+          gap={6}
+          bg="gray.800"
+          p={8}
+          rounded="2xl"
+          shadow="2xl"
+          borderWidth="1px"
+          borderColor="gray.700"
+          position="relative"
+          _before={{
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bg: "linear-gradient(45deg, rgba(60,110,255,0.05), rgba(50,50,50,0.1))",
+            borderRadius: "2xl",
+            pointerEvents: "none",
+          }}
+        >
+          <Avatar.Root size="2xl">
             <Avatar.Fallback name="User Avatar" />
             <Avatar.Image src="https://i.pravatar.cc/150?img=23" />
           </Avatar.Root>
 
           <Box>
-            <Heading size="md">{profile.name}</Heading>
-            <Text color="gray.500">Member since {profile.createDate}</Text>
-            <Badge colorScheme="green" mt={2}>
-              Active
-            </Badge>
+            <Heading size="lg" mb={3} color="gray.100">
+              {profile?.name}
+            </Heading>
+            <Text color="gray.400" fontSize="md">
+              Member since{" "}
+              {profile?.createDate ? formatDate(profile.createDate) : ""}
+            </Text>
+            <Flex gap={3} mt={4}>
+              <Badge
+                colorScheme="green"
+                px={4}
+                py={1}
+                rounded="full"
+                bg="green.500"
+                color="white"
+                textTransform="none"
+                fontSize="sm"
+              >
+                {profile?.customerType}
+              </Badge>
+              <Badge
+                colorScheme="blue"
+                px={4}
+                py={1}
+                rounded="full"
+                bg="blue.500"
+                color="white"
+                textTransform="none"
+                fontSize="sm"
+              >
+                {profile?.role}
+              </Badge>
+            </Flex>
           </Box>
         </Flex>
 
-        <Box w="full" mt={4}>
-          <Heading size="sm" mb={4}>
+        <Box w="full">
+          <Heading size="md" mb={6} color="gray.200">
             Personal Information
           </Heading>
 
-          <Card.Root>
-            <CardBody>
+          <Card.Root
+            bg="gray.800"
+            rounded="2xl"
+            shadow="2xl"
+            borderWidth="1px"
+            borderColor="gray.700"
+            overflow="hidden"
+            position="relative"
+            _before={{
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bg: "linear-gradient(45deg, rgba(60,110,255,0.05), rgba(50,50,50,0.1))",
+              borderRadius: "2xl",
+              pointerEvents: "none",
+            }}
+          >
+            <CardBody p={8}>
               <VStack>
-                <Flex justifyContent="space-between" w="full">
-                  <Text fontWeight="medium" color="gray.600">
+                <Flex
+                  justifyContent="space-between"
+                  w="full"
+                  p={2}
+                  _hover={{ bg: "gray.700" }}
+                  rounded="xl"
+                  transition="all 0.3s"
+                >
+                  <Text fontWeight="medium" color="gray.400">
                     Email
                   </Text>
-                  <Text>{profile.email}</Text>
+                  <Text color="gray.100">{profile?.email}</Text>
                 </Flex>
-                <Flex justifyContent="space-between" w="full">
-                  <Text fontWeight="medium" color="gray.600">
+                <Flex
+                  justifyContent="space-between"
+                  w="full"
+                  p={2}
+                  _hover={{ bg: "gray.700" }}
+                  rounded="xl"
+                  transition="all 0.3s"
+                >
+                  <Text fontWeight="medium" color="gray.400">
+                    Citizen ID
+                  </Text>
+                  <Text color="gray.100">{profile?.citizenId}</Text>
+                </Flex>
+                <Flex
+                  justifyContent="space-between"
+                  w="full"
+                  p={2}
+                  _hover={{ bg: "gray.700" }}
+                  rounded="xl"
+                  transition="all 0.3s"
+                >
+                  <Text fontWeight="medium" color="gray.400">
                     Phone
                   </Text>
-                  <Text>{profile.phone}</Text>
+                  <Text color="gray.100">{profile?.phone}</Text>
                 </Flex>
-                <Flex justifyContent="space-between" w="full">
-                  <Text fontWeight="medium" color="gray.600">
+                <Flex
+                  justifyContent="space-between"
+                  w="full"
+                  p={2}
+                  _hover={{ bg: "gray.700" }}
+                  rounded="xl"
+                  transition="all 0.3s"
+                >
+                  <Text fontWeight="medium" color="gray.400">
                     Address
                   </Text>
-                  <Text>{profile.address}</Text>
+                  <Text color="gray.100">{profile?.address}</Text>
                 </Flex>
               </VStack>
             </CardBody>
           </Card.Root>
         </Box>
-
-        <Flex w="full" justifyContent="flex-end" mt={4}>
-          <Button colorScheme="blue" size="sm">
-            Edit Profile
-          </Button>
-        </Flex>
       </VStack>
     </Box>
-    )
-}
+  );
+};
 
 export default Profile;
