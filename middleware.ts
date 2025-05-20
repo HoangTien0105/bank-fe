@@ -1,52 +1,65 @@
+// export { auth as middleware } from "@/auth";
+
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
+import { jwtDecode } from "jwt-decode";
 
-export async function middleware(request: NextRequest) {
-  try {
+// export default async function middleware(req: NextRequest) {
+//   const protectedRoutes = ["/admin", "/customer"];
+//   const currentPath = req.nextUrl.pathname;
+//   const isProtectedRoute = protectedRoutes.includes(currentPath);
+//
+//   if (isProtectedRoute) {
+//     const session = await auth();
+//     const user = session?.user;
+//     const decodedToken = jwtDecode(session?.user.accessToken || "");
+//
+//     if (!user) {
+//       return NextResponse.redirect(new URL("/login", req.nextUrl));
+//     }
+//   }
+//
+//   return NextResponse.next();
+// }
+
+export default async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Define role-based protected routes
+  const roleProtectedRoutes: Record<string, string[]> = {
+    "/admin": ["admin"],
+    "/customer": ["customer", "admin"], // allow both roles here, adjust as needed
+  };
+
+  // Check if the path is protected
+  const matchedRoute = Object.keys(roleProtectedRoutes).find((route) =>
+    pathname.startsWith(route),
+  );
+
+  if (matchedRoute) {
     const session = await auth();
-    const pathname = request.nextUrl.pathname;
 
-    //Các route không cần xác thực
-    if (pathname.startsWith("/_next") || pathname.includes("/api/")) {
-      return NextResponse.next();
+    if (!session?.user?.accessToken) {
+      // No session or token, redirect to login
+      return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
 
-    // Nếu đang ở trang login và đã đăng nhập, điều hướng theo role
-    if (pathname === "/login" && session?.user) {
-      if (session.user.role === "CUSTOMER") {
-        return NextResponse.redirect(
-          new URL("/customer", request.url)
-        );
-      } else if (session.user.role === "ADMIN") {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+    try {
+      const decodedToken = jwtDecode(session.user.accessToken);
+      const userRole = decodedToken?.role; // Ensure your token has a `role` claim
+
+      const allowedRoles = roleProtectedRoutes[matchedRoute];
+      if (!allowedRoles.includes(userRole.toLowerCase())) {
+        // Role not authorized
+        return NextResponse.redirect(new URL("/login", req.nextUrl)); // or /login
       }
+    } catch (error) {
+      // Invalid token, redirect to login
+      console.log(error);
+      return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
-
-    //Nếu chưa đăng nhập và k phải trang login, redirect về login
-    if (!session?.user && pathname !== "/login") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    //Kiểm tra quyền truy cập vào các trang admin
-    if (pathname.startsWith("/dashboard") && session?.user?.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    // Kiểm tra quyền truy cập vào các trang customer
-    if (
-      pathname.startsWith("/customer") &&
-      session?.user?.role !== "CUSTOMER"
-    ) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error("Middleware error:", error);
-    return NextResponse.redirect(new URL("/login", request.url));
   }
-}
 
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};
+  // Allow request to continue
+  return NextResponse.next();
+}
