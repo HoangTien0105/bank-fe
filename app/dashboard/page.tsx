@@ -6,6 +6,8 @@ import BankAccountsList from "./_components/BankAccountsList";
 import { UserProfile } from "./_types/user";
 import { BankAccount } from "./_types/bankAccount";
 import { getAllTransactions } from "@/api/transaction";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const mockUserProfile: UserProfile = {
   id: "user-001",
@@ -42,7 +44,20 @@ const mockBankAccounts: BankAccount[] = [
 ];
 
 const Page = async () => {
-  const allTransactionsResponse = await getAllTransactions();
+  const session = await auth();
+
+  if (!session?.user?.accessToken) {
+    redirect("/login");
+  }
+
+  let allTransactionsResponse;
+  try {
+    allTransactionsResponse = await getAllTransactions();
+  } catch (error) {
+    // Xử lý lỗi nhưng không chuyển hướng ở đây
+    console.error("Error fetching transactions:", error);
+    allTransactionsResponse = { results: [] };
+  }
 
   return (
     <Box p={6} height="100vh" position="relative">

@@ -1,129 +1,95 @@
 "use client";
 
-import { loginApi } from "@/api/auth";
 import { PasswordInput } from "@/components/ui/password-input";
 import { toaster } from "@/components/ui/toaster";
 import {
-  Flex,
-  Stack,
-  Field,
-  Heading,
-  Input,
   Button,
-  Image,
+  Field,
   Fieldset,
+  Flex,
+  Image,
+  Input,
+  Stack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useForm } from "react-hook-form";
+import { LoginSchema, TLoginSchema } from "../_types/login";
+import { loginAction } from "../actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 
-interface LoginForm {
-  username: string;
-  password: string;
-}
+const LoginForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [state, action] = useActionState(loginAction, {
+    message: "",
+  });
 
-interface LoginFormProps {
-  onLoginSucess?: (data: any) => void;
-  onLoginError?: (error: Error) => void;
-  isLoading?: boolean;
-  defaultValues?: Partial<LoginForm>;
-}
-
-const LoginForm = ({
-  onLoginSucess,
-  onLoginError,
-  isLoading : externalLoading = false,
-  defaultValues,
-}: LoginFormProps) => {
-  const [isLoading, setIsLoading] = useState(externalLoading);
-  const router = useRouter();
+  console.log(state);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
-    defaultValues,
+  } = useForm<TLoginSchema>({
+    resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: TLoginSchema) => {
     try {
       setIsLoading(true);
 
-      //Gọi API đăng nhập từ service
-      const tokenData = await loginApi(data.username, data.password);
+      await signIn("credentials", {
+        username: data.username,
+        password: data.password,
+      });
 
-      //Lưu token vào storage
-      localStorage.setItem('auth_token', JSON.stringify(tokenData));
-
-      //Hiển thị thông báo thành công
       toaster.success({
         title: "Login success",
         duration: 3000,
-        closable: true
+        closable: true,
       });
-
-      //Gọi callback nếu có
-      if(onLoginSucess){
-        onLoginSucess(tokenData)
-      }
-
-      router.push('/dashboard');
     } catch (error) {
-      console.error("Login error: ", error);
-
       toaster.error({
-        title:"Login failed",
-        description: error instanceof Error ? error.message : "Please review your information",
+        title: "Login failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please review your information",
         duration: 3000,
         closable: true,
-      })
-
-      if(onLoginError && error instanceof Error) {
-        onLoginError(error);
-      }
-    } finally{
+      });
+    } finally {
       setIsLoading(false);
     }
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form action={action} onSubmit={handleSubmit(onSubmit)}>
       <Stack className="flex flex-row justify-center max-w-4xl mx-auto border border-gray-700 rounded-lg shadow-lg bg-gray-900 overflow-hidden">
         <Flex className="p-8 flex-col flex-1 flex space-y-6 justify-center">
-          <Heading className="text-2xl text-white mb-6">
-            Sign in to your account
-          </Heading>
+          <Fieldset.Root className="mb-6" invalid={!!errors.username}>
+            <Fieldset.Legend>Sign in to your account</Fieldset.Legend>
+            <Field.Root className="mb-6" invalid={!!errors.username}>
+              <Field.Label>Username</Field.Label>
+              <Input
+                type="text"
+                disabled={isLoading}
+                placeholder="Enter your email or phone number"
+                {...register("username")}
+              />
+              <Field.ErrorText>{errors?.username?.message}</Field.ErrorText>
+            </Field.Root>
 
-          <Fieldset.Root
-            className="mb-6"
-            invalid={!!errors.username}
-          >
-            <Fieldset.Legend>Email / Phone number</Fieldset.Legend>
-            <Input
-              type="email"
-              disabled={isLoading}
-              className={errors.username ? "border border-[#f87171]" : ""}
-              placeholder="Enter your email or phone number"
-              {...register("username", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                  message: "Email is not valid",
-                },
-              })}
-            />
+            <Field.Root className="mb-6" invalid={!!errors.password}>
+              <Field.Label>Password</Field.Label>
+              <PasswordInput
+                disabled={isLoading}
+                placeholder="Enter your password"
+                {...register("password")}
+              />
+              <Field.ErrorText>{errors?.password?.message}</Field.ErrorText>
+            </Field.Root>
           </Fieldset.Root>
-
-          <Field.Root className="mb-6" invalid={!!errors.password}>
-            <Field.Label>Password</Field.Label>
-            <PasswordInput
-              disabled={isLoading}
-              placeholder="Enter your password"
-              {...register("password", {
-                required: "Password is required",
-              })}
-            />
-          </Field.Root>
 
           <Button
             colorScheme="blue"
@@ -135,18 +101,6 @@ const LoginForm = ({
           >
             Sign in
           </Button>
-          <Button
-  onClick={() => {
-    toaster.error({
-      title: "Test Error",
-      description: "This is a test error message",
-      duration: 3000,
-      closable: true,
-    });
-  }}
->
-  Test Error Toast
-</Button>
         </Flex>
         <Flex className="flex-1 hidden md:block caret-transparent">
           <Image

@@ -45,6 +45,7 @@ export const login = async (payload: {
     throw new Error("Login failed");
   }
 };
+
 export async function logoutApi(): Promise<void> {
   try {
     const token = localStorage.getItem("auth_token");
@@ -69,3 +70,8 @@ export async function logoutApi(): Promise<void> {
     throw error;
   }
 }
+
+export const me = async () => {
+  const response = await axiosInstance.get("/auth/me");
+  return response.data;
+};
