@@ -15,7 +15,7 @@ export default async function CustomerLayout({
   }
 
   return (
-    <Box p={6} height="100vh" position="relative">
+    <Box p={6} height="100vh" position="relative" >
       <Heading mb={4}>Dashboard</Heading>
       {children}
     </Box>
