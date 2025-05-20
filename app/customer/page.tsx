@@ -8,6 +8,7 @@ import { CustomerProfile as ICustomerProfile } from "../../types/customer";
 import { me } from "@/api/auth";
 import { toaster } from "@/components/ui/toaster";
 import TransactionsList from "@/components/common/TransactionsList";
+import AccountsList from "./_components/AccountsList";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -88,7 +89,7 @@ const Page = () => {
       case "profile":
         return <Profile profile={data?.profile} />;
       case "bank-accounts":
-        return <div>Bank Accounts Content</div>;
+        return <AccountsList/>
       case "transactions":
         return (
           <TransactionsList customerId={data?.customerId} variant="customer" />

@@ -1,19 +1,18 @@
 import axiosInstance from "@/config/axios";
 import { PaginationRequest } from "@/types/pagination";
 
-export const getAllTransactions = async (
+export const getAllAccounts = async (
   paginationParams: PaginationRequest = {}
 ) => {
   try {
-    const { offset = 0, limit = 19, keyword } = paginationParams;
+    const { offset = 0, limit = 10, keyword } = paginationParams;
 
-    // Build query parameters
     const params = new URLSearchParams();
     params.append("offset", offset.toString());
     params.append("limit", limit.toString());
-
+    
     if(keyword) params.append('keyword', keyword);
-    const response = await axiosInstance.get(`/transactions?${params.toString()}`);
+    const response = await axiosInstance.get(`/accounts?${params.toString()}`);
     return response.data.response;
   } catch (error) {
     console.log(error);
