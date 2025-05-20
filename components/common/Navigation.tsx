@@ -1,30 +1,43 @@
-import { useAuth } from "@/contexts/auth-context";
 import { Box, Button, Menu, Portal, Tabs } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { signOut } from "next-auth/react";
+import { ReactNode, useEffect, useState } from "react";
 
 interface MenuItem {
   id: string;
   label: string;
   icon?: ReactNode;
   children?: ReactNode;
+  data?: any;
 }
 
 interface NavigationProps {
   items: MenuItem[];
   defaultValue?: string;
   onMenuItemClick?: (item: MenuItem) => void;
+  renderContent: (itemId: string, data?: any) => ReactNode;
 }
 
 const Navigation = ({
   items = [],
   defaultValue = "profile",
   onMenuItemClick,
+  renderContent,
 }: NavigationProps) => {
-  const { logout } = useAuth();
+  const [activeTab, setActiveTab] = useState(defaultValue);
+  // Cập nhật activeTab khi defaultValue thay đổi từ bên ngoài
+  useEffect(() => {
+    setActiveTab(defaultValue);
+  }, [defaultValue]);
+
+  const handleTabChange = (item: MenuItem) => {
+    setActiveTab(item.id);
+    onMenuItemClick?.(item);
+  };
 
   return (
     <Tabs.Root
       orientation="vertical"
+      value={activeTab}
       defaultValue={defaultValue}
       overflowY="hidden"
       height="calc(100vh - 100px)"
@@ -34,7 +47,7 @@ const Navigation = ({
           <Tabs.Trigger
             key={item.id}
             value={item.id}
-            onClick={() => onMenuItemClick?.(item)}
+            onClick={() => handleTabChange(item)}
           >
             {item.icon}
             {item.label}
@@ -59,9 +72,9 @@ const Navigation = ({
                     _hover={{ bg: "bg.error", color: "fg.error" }}
                     onSelect={async () => {
                       try {
-                        await logout();
+                        await signOut();
                       } catch (error) {
-                        console.error('Logout error:', error);
+                        console.error("Logout error:", error);
                       }
                     }}
                   >
@@ -73,9 +86,9 @@ const Navigation = ({
           </Menu.Root>
         </Box>
       </Tabs.List>
-      {items.map(item => (
+      {items.map((item) => (
         <Tabs.Content key={item.id} value={item.id}>
-          {item.children}
+          {renderContent(item.id, item.data)}
         </Tabs.Content>
       ))}
     </Tabs.Root>

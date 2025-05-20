@@ -15,6 +15,8 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
+    console.log("Config", config);
+
     if (config.url?.includes("/auth/login")) {
       return config;
     }
@@ -22,6 +24,8 @@ axiosInstance.interceptors.request.use(
     const session = await auth();
 
     const user = session?.user;
+
+    console.log(user);
 
     if (user) {
       config.headers.setAuthorization(`Bearer ${user.accessToken}`);
