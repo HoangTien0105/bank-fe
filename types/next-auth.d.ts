@@ -7,7 +7,6 @@ declare module "next-auth" {
       refreshToken: string;
       tokenType: string;
       expiresIn: number;
-      role: string;
     };
   }
 }

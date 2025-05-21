@@ -1,10 +1,14 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { login } from "./api/auth";
+import { LoginSchema } from "./app/login/_types/login";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
+  },
+  session: {
+    strategy: "jwt",
   },
   providers: [
     Credentials({
@@ -16,15 +20,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          // Tránh gọi API nếu không credentials
-          if (!credentials?.username || !credentials?.password) {
-            return null;
-          }
-
           const payload = {
             username: credentials?.username as string,
             password: credentials?.password as string,
           };
+
+          const validationResult = await LoginSchema.safeParseAsync(payload);
+          if (!validationResult.success) {
+            console.error("Sign in validation eror");
+            return null;
+          }
+
           const data = await login(payload);
 
           if (data?.success) {
@@ -39,22 +45,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Khi đăng nhập lần đầu
       if (user) {
         return { ...token, ...user };
       }
 
-      // Khi gọi update session
       if (trigger === "update" && session) {
         return { ...token, ...session };
       }
 
       return token;
     },
-
     async session({ session, token }) {
       session.user = token as any;
       return session;
     },
+    // async authorized({ auth }) {
+    //   return !!auth;
+    // },
   },
 });

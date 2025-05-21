@@ -1,5 +1,4 @@
 import { auth, signIn, signOut } from "@/auth";
-import { cookies } from "next/headers";
 
 export interface SessionToken {
   accessToken: string;
@@ -32,3 +31,4 @@ export const updateSession = async (token: Partial<SessionToken>) => {
 export const clearSession = async () => {
   await signOut();
 };
+
