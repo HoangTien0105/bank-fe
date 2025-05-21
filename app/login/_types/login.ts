@@ -1,7 +1,7 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const LoginSchema = z.object({
-  username: z.string(),
+  username: z.string().email(),
   password: z.string(),
 });
 

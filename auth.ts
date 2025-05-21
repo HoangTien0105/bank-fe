@@ -27,6 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const validationResult = await LoginSchema.safeParseAsync(payload);
           if (!validationResult.success) {
+            console.error("Sign in validation eror");
             return null;
           }
 

@@ -14,7 +14,7 @@ export const loginAction = async (
 
   if (!validationResult.success) {
     return {
-      errors: validationResult.error.flatten().fieldErrors,
+      message: "Something wrong happened",
     };
   }
 
