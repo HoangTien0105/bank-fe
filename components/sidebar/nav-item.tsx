@@ -4,7 +4,7 @@ import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface NavItemProps {
+export interface NavItemProps {
   icon: React.ElementType;
   children: React.ReactNode;
   path: string;
