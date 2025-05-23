@@ -15,6 +15,7 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
+    console.log("--Before request--");
     console.log("Config", config);
 
     if (config.url?.includes("/auth/login")) {
@@ -22,14 +23,18 @@ axiosInstance.interceptors.request.use(
     }
 
     const session = await auth();
-
     const user = session?.user;
 
-    console.log(user);
+    if (!user) return config;
 
-    if (user) {
-      config.headers.setAuthorization(`Bearer ${user.accessToken}`);
+    const expiredTime = user.exp;
+    const now = new Date().getTime();
+
+    if (expiredTime < now) {
+      console.log("Access token expired");
     }
+
+    config.headers.setAuthorization(`Bearer ${user.accessToken}`);
 
     return config;
   },
@@ -41,6 +46,7 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log("--After response--");
     return response;
   },
   async (error) => {
