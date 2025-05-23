@@ -2,11 +2,12 @@
 
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Box } from "@chakra-ui/react";
-import { FiHome, FiUser } from "react-icons/fi";
+import { FiCreditCard, FiHome, FiUser } from "react-icons/fi";
 
 const navItems = [
   { name: "Home", icon: FiHome, path: "/customer/dashboard" },
   { name: "Transactions", icon: FiUser, path: "/customer/dashboard/transactions" },
+  { name: "Accounts", icon: FiCreditCard, path: "/customer/dashboard/accounts" },
 ];
 
 const CustomerDashboardLayout = ({ children }: { children: React.ReactNode }) => {
