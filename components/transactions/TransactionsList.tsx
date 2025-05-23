@@ -1,7 +1,7 @@
 "use client";
 
 import { Transaction } from "@/types/transaction";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useColorModeValue } from "../ui/color-mode";
 import {
   Box,
@@ -18,114 +18,51 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight, LuSearch, LuX } from "react-icons/lu";
-import { getAllTransactions } from "@/api/transaction";
-import { PaginationRequest } from "@/types/pagination";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface TransactionsListProps {
+  transactions: Transaction[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  isLoading?: boolean;
   customerId?: string;
   title?: string;
   showSearch?: boolean;
   variant?: "customer" | "admin";
+  onPageChange?: (page: number) => void;
 }
 
 const TransactionsList = ({
+  transactions = [],
+  totalItems = 0,
+  totalPages = 1,
+  currentPage = 1,
+  isLoading = false,
   customerId,
   title = "Transactions list",
   showSearch = true,
   variant = "customer",
+  onPageChange,
 }: TransactionsListProps) => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setIsLoading] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState(""); // Cho keyword gọi API
-  const [searchInput, setSearchInput] = useState(""); // Cho thanh search
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const itemsPerPage = 8;
 
   const headerBg = useColorModeValue("gray.100", "gray.800");
-  const hoverBg = useColorModeValue("gray.50", "gray.700");
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [currentPage, customerId, searchKeyword]);
-
-  const handleSearch = () => {
-    setSearchKeyword(searchInput);
-    setCurrentPage(1);
-  };
-
-  const clearSearch = () => {
-    setSearchInput("");
-    setSearchKeyword("");
-    setCurrentPage(1);
-  };
-
-  const fetchTransactions = async () => {
-    try {
-      setIsLoading(true);
-
-      //Tinhs toán offet dựa vào trang htai
-      const offset = (currentPage - 1) * itemsPerPage;
-
-      // Prepare pagination request
-      const paginationParams: PaginationRequest = {
-        offset: offset,
-        limit: itemsPerPage,
-      };
-
-      if (searchKeyword) {
-        paginationParams.keyword = searchKeyword;
-      }
-
-      const response = await getAllTransactions(paginationParams);
-
-      if (response) {
-        setTransactions(response.results || []);
-        setTotalItems(response.totalRows);
-        setTotalPages(response.totalPages);
-      } else {
-        setTransactions([]);
-        setTotalItems(0);
-        setTotalPages(1);
-      }
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const hoverBg = useColorModeValue("gray.50", "gray.600");
 
   const handlePageChange = (details: { page: number }) => {
-    setCurrentPage(details.page);
+    if (onPageChange) {
+      onPageChange(details.page);
+    } else {
+      // Fallback to client-side navigation if no callback provided
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", details.page.toString());
+      router.push(`${pathname}?${params.toString()}`);
+    }
   };
-
-  const endElement = (
-    <Flex alignItems="center" gap={1}>
-      {searchInput && (
-        <IconButton
-          aria-label="Delete"
-          onClick={clearSearch}
-          size="sm"
-          variant="ghost"
-          color="gray.500"
-          me={-2}
-        >
-          <LuX />
-        </IconButton>
-      )}
-      <IconButton
-        aria-label="Search"
-        onClick={handleSearch}
-        size="sm"
-        variant="ghost"
-        color="gray.500"
-        me={-2}
-      >
-        <LuSearch />
-      </IconButton>
-    </Flex>
-  );
 
   return (
     <Box
@@ -141,25 +78,14 @@ const TransactionsList = ({
         gap={3}
       >
         <Heading size="md">{title}</Heading>
-
-        {showSearch && (
-          <InputGroup maxW="300px" endElement={endElement}>
-            <Input
-              placeholder="Enter description"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            />
-          </InputGroup>
-        )}
       </Flex>
-      {loading ? (
+      {isLoading ? (
         <Flex justifyContent="center" my={10}>
           <Spinner size="xl" color="blue.500" />
         </Flex>
       ) : transactions.length === 0 ? (
         <Box textAlign="center" py={10}>
-          <Text fontSize="lg">No transactions founded</Text>
+          <Text fontSize="lg">No transactions found</Text>
         </Box>
       ) : (
         <Stack spaceY={4}>
@@ -200,17 +126,23 @@ const TransactionsList = ({
                     <Table.Row
                       key={item.id}
                       cursor="pointer"
-                      _hover={{ bg: hoverBg }}
-                      transition="background-color 0.2s"
+                      _hover={{
+                        bg: hoverBg,
+                        transform: "translateY(-1px)",
+                        boxShadow: "sm",
+                        transition: "all 0.2s ease-in-out",
+                      }}
                     >
                       <Table.Cell>
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </Table.Cell>
                       <Table.Cell>{item.type}</Table.Cell>
-                      <Table.Cell fontWeight="medium">
-                        {item.amount.toLocaleString("vn-VN", {
-                          minimumFractionDigits: 2,
-                        })}{" "}
+                      <Table.Cell>
+                        {typeof item.amount === "number"
+                          ? item.amount.toLocaleString("vn-VN", {
+                              minimumFractionDigits: 2,
+                            })
+                          : item.amount}{" "}
                         VNĐ
                       </Table.Cell>
                       <Table.Cell>{item.location}</Table.Cell>
