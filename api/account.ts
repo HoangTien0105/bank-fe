@@ -10,9 +10,18 @@ export const getAllAccounts = async (
     const params = new URLSearchParams();
     params.append("offset", offset.toString());
     params.append("limit", limit.toString());
-    
-    if(keyword) params.append('keyword', keyword);
+
+    if (keyword) params.append("keyword", keyword);
     const response = await axiosInstance.get(`/accounts?${params.toString()}`);
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAccountById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/accounts/${id}`);
     return response.data.response;
   } catch (error) {
     console.log(error);

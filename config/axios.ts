@@ -15,8 +15,8 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
-    console.log("--Before request--");
-    console.log("Config", config);
+    // console.log("--Before request--");
+    // console.log("Config", config);
 
     if (config.url?.includes("/auth/login")) {
       return config;
@@ -25,7 +25,12 @@ axiosInstance.interceptors.request.use(
     const session = await auth();
     const user = session?.user;
 
-    if (!user) return config;
+    if (!user) {
+      if (config.url?.includes("/auth/logout")) {
+        return config;
+      }
+      return config;
+    }
 
     const expiredTime = user.exp;
     const now = new Date().getTime();
@@ -40,18 +45,18 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("--After response--");
+    // console.log("--After response--");
     return response;
   },
   async (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 export default axiosInstance;
