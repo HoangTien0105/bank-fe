@@ -1,0 +1,121 @@
+import { getAllAccounts } from "@/api/account";
+import PaginationComponent from "@/components/common/Pagination";
+import { Accounts } from "@/types/accounts";
+import {
+  Box,
+  Card,
+  CardBody,
+  Flex,
+  Link,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { ChevronRight, CreditCard } from "lucide-react";
+
+interface AccountsPageProps {
+  searchParams?: {
+    page?: string;
+  };
+}
+
+const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
+  const itemsPerPage = 5;
+  const currentPage = Number(searchParams?.page) || 1;
+  const offset = (currentPage - 1) * itemsPerPage;
+
+  const response = await getAllAccounts({
+    offset,
+    limit: itemsPerPage,
+  });
+
+  const accounts = response?.results || [];
+  const totalPages = response?.totalPages || 1;
+
+  const cardBg = "bg";
+  const cardHoverBg = "bg.muted";
+  const iconBg = "blue.subtle";
+  const iconColor = "blue.solid";
+
+  return (
+    <Box w="full" maxW="4xl" margin="auto">
+      {accounts.length === 0 ? (
+        <Box textAlign="center" py={10}>
+          <Text fontSize="lg">You don't have any accounts</Text>
+        </Box>
+      ) : (
+        <Stack>
+          <VStack align="stretch">
+            {accounts.map((account: Accounts) => (
+              <Card.Root
+                key={account.id}
+                bg={cardBg}
+                borderWidth="1px"
+                borderRadius="lg"
+                overflow="hidden"
+                boxShadow="sm"
+                _hover={{
+                  shadow: "md",
+                  bg: cardHoverBg,
+                  transform: "translateY(-2px)",
+                }}
+                transition="all 0.2s ease-in-out"
+              >
+                <CardBody>
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <Box>
+                      <Flex alignItems="center" gap={3}>
+                        <Box p={2} bg={iconBg} borderRadius="md">
+                          <CreditCard size={20} color={iconColor} />
+                        </Box>
+                        <Box>
+                          <Text fontWeight="medium">{account.accountType}</Text>
+                          <Text fontSize="sm" color="gray.500">
+                            {account.id}
+                          </Text>
+                        </Box>
+                      </Flex>
+                    </Box>
+                    <Box textAlign="right">
+                      <VStack fontWeight="bold" fontSize="lg">
+                        {account.balance.toLocaleString("vi-VN", {
+                          minimumFractionDigits: 2,
+                        })}{" "}
+                        VND
+                        <Flex
+                          alignItems="center"
+                          justifyContent="flex-end"
+                          color="blue.500"
+                          mt={1}
+                        >
+                          <Link
+                            href={`/customer/dashboard/accounts/${account.id}`}
+                            key={account.id}
+                            fontSize="lg"
+                            color="blue.500"
+                          >
+                            View details
+                          </Link>
+                          <ChevronRight size={16} />
+                        </Flex>
+                      </VStack>
+                    </Box>
+                  </Flex>
+                </CardBody>
+              </Card.Root>
+            ))}
+          </VStack>
+
+          {totalPages > 1 && (
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          )}
+        </Stack>
+      )}
+    </Box>
+  );
+};
+
+export default AccountsPage;

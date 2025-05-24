@@ -87,7 +87,7 @@ const Navigation = ({
         </Box>
       </Tabs.List>
       {items.map((item) => (
-        <Tabs.Content key={item.id} value={item.id}>
+        <Tabs.Content key={item.id} value={item.id} margin="auto">
           {renderContent(item.id, item.data)}
         </Tabs.Content>
       ))}

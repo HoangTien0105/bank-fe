@@ -1,24 +1,13 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Card,
-  CardBody,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { CustomerProfile } from "../_types/customer";
+import { Avatar, Badge, Box, Card, CardBody, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import { me } from "@/api/auth";
 import { formatDate } from "@/utils/date";
 
-interface ProfileProps {
-  profile: CustomerProfile | null;
-}
+const Page = async () => {
+  const profileResponse = await me();
+  const profile = profileResponse.success ? profileResponse.response : null;
 
-const Profile = ({ profile }: ProfileProps) => {
   return (
-    <Box w="full" maxW="4xl" margin="auto">
+    <Box className="w-full h-full p-6">
       <VStack>
         <Flex
           w="full"
@@ -173,4 +162,4 @@ const Profile = ({ profile }: ProfileProps) => {
   );
 };
 
-export default Profile;
+export default Page;

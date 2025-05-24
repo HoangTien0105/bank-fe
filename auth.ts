@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login } from "./api/auth";
+import { login, logout } from "./api/auth";
 import { LoginSchema } from "./app/login/_types/login";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -15,23 +15,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
       credentials: {
-        username: { label: "Username", type: "email" },
-        password: { label: "Password", type: "password" },
+        username: {},
+        password: {},
       },
       authorize: async (credentials) => {
         try {
-          const payload = {
-            username: credentials?.username as string,
-            password: credentials?.password as string,
-          };
-
-          const validationResult = await LoginSchema.safeParseAsync(payload);
+          const validationResult =
+            await LoginSchema.safeParseAsync(credentials);
           if (!validationResult.success) {
             console.error("Sign in validation eror");
             return null;
           }
 
-          const data = await login(payload);
+          console.log("Auth validation result data:", validationResult.data);
+
+          const data = await login(validationResult.data);
 
           if (data?.success) {
             return data?.response;
@@ -62,5 +60,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // async authorized({ auth }) {
     //   return !!auth;
     // },
+  },
+  events: {
+    async signOut(event) {
+      const token = "token" in event ? event.token : null;
+      try {
+        const result = await logout();
+
+        if (result.success !== false) {
+          console.log("Backend logout successful");
+        } else {
+          console.warn("Backend logout failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Logout event error:", error);
+      }
+    },
   },
 });

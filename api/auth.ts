@@ -1,6 +1,4 @@
-import { LogoutResponse } from "@/app/login/_types/auth";
 import axiosInstance from "@/config/axios";
-import { BASE_API_URL } from "@/constant/api";
 
 export const login = async (payload: {
   username: string;
@@ -25,30 +23,19 @@ export const refreshToken = async (payload: any) => {
   }
 };
 
-export async function logoutApi(): Promise<void> {
+export const logout = async () => {
   try {
-    const token = localStorage.getItem("auth_token");
-    if (!token) throw new Error("No authentication token found");
-
-    const { accessToken } = JSON.parse(token);
-    const response = await fetch(`${BASE_API_URL}/api/auth/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const data: LogoutResponse = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message || "Logout failed");
-    }
+    const response = await axiosInstance.post("/auth/logout");
+    return response.data;
   } catch (error) {
-    console.error("Logout API error: ", error);
-    throw error;
+    console.error("Logout API error:", error);
+    // Không throw error để không block NextAuth logout
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
-}
+};
 
 export const me = async () => {
   const response = await axiosInstance.get("/auth/me");
