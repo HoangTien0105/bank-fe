@@ -2,13 +2,12 @@
 
 import { useColorModeValue } from "../ui/color-mode";
 import { clearSession } from "@/utils/session";
-import { Menu, Portal } from "@chakra-ui/react";
+import { Button, Menu, Portal } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { FaHamburger } from "react-icons/fa";
+import { HiCog } from "react-icons/hi";
 
 export const Hamburger = () => {
   const router = useRouter();
-  const menuBg = useColorModeValue("white", "gray.800");
 
   const handleLogout = async () => {
     await clearSession();
@@ -17,8 +16,10 @@ export const Hamburger = () => {
 
   return (
     <Menu.Root>
-      <Menu.Trigger bg={menuBg} shadow="md" borderRadius="md" asChild>
-        <FaHamburger size={12} />
+      <Menu.Trigger asChild>
+        <Button suppressHydrationWarning shadow="md" borderRadius="md" cursor="pointer" variant="outline" size="sm">
+          <HiCog />
+        </Button>
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
@@ -26,7 +27,7 @@ export const Hamburger = () => {
             <Menu.Item
               value="logout"
               color="fg.error"
-              _hover={{ bg: "bg.error", color: "fg.error" }}
+              _hover={{ bg: "bg.error", color: "fg.error", cursor: "pointer" }}
               onClick={handleLogout}
             >
               Logout
