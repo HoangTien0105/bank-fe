@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login } from "./api/auth";
+import { JWT } from "next-auth/jwt";
+import { login, logout } from "./api/auth";
 import { LoginSchema } from "./app/login/_types/login";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -62,5 +63,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // async authorized({ auth }) {
     //   return !!auth;
     // },
+  },
+  events: {
+    async signOut(event) {
+      const token = "token" in event ? event.token : null;
+      try {
+        const result = await logout();
+
+        if (result.success !== false) {
+          console.log("Backend logout successful");
+        } else {
+          console.warn("Backend logout failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Logout event error:", error);
+      }
+    },
   },
 });

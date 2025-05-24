@@ -1,19 +1,9 @@
-import { clearSession } from "@/utils/session";
+"use client";
+
 import { Button, Menu, Portal } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import { HiCog } from "react-icons/hi";
-
-export const Hamburger = async () => {
-
-  const handleLogout = async () => {
-    try {
-      // Gọi clearSession để xử lý logout ở backend
-      await clearSession();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
-
+import { logoutAction } from "./action";
+export const Hamburger = () => {
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
@@ -34,8 +24,14 @@ export const Hamburger = async () => {
             <Menu.Item
               value="logout"
               color="fg.error"
-              _hover={{ bg: "bg.error", color: "fg.error", cursor: "pointer" }}
-              onClick={handleLogout}
+              _hover={{
+                bg: "bg.error",
+                color: "fg.error",
+                cursor: "pointer",
+              }}
+              onClick={async () => {
+                await logoutAction();
+              }}
             >
               Logout
             </Menu.Item>
