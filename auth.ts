@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
 import { login, logout } from "./api/auth";
 import { LoginSchema } from "./app/login/_types/login";
 
@@ -16,23 +15,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
       credentials: {
-        username: { label: "Username", type: "email" },
-        password: { label: "Password", type: "password" },
+        username: {},
+        password: {},
       },
       authorize: async (credentials) => {
         try {
-          const payload = {
-            username: credentials?.username as string,
-            password: credentials?.password as string,
-          };
-
-          const validationResult = await LoginSchema.safeParseAsync(payload);
+          const validationResult =
+            await LoginSchema.safeParseAsync(credentials);
           if (!validationResult.success) {
             console.error("Sign in validation eror");
             return null;
           }
 
-          const data = await login(payload);
+          console.log("Auth validation result data:", validationResult.data);
+
+          const data = await login(validationResult.data);
 
           if (data?.success) {
             return data?.response;

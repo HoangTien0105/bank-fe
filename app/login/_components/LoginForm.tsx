@@ -1,7 +1,6 @@
 "use client";
 
 import { PasswordInput } from "@/components/ui/password-input";
-import { toaster } from "@/components/ui/toaster";
 import {
   Button,
   Field,
@@ -11,60 +10,55 @@ import {
   Input,
   Stack,
 } from "@chakra-ui/react";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { LoginSchema, TLoginSchema } from "../_types/login";
 import { loginAction } from "../actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toaster } from "@/components/ui/toaster";
 
 const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [state, action] = useActionState(loginAction, {
+  const router = useRouter();
+  const [state, action, isPending] = useActionState(loginAction, {
+    success: false,
     message: "",
   });
 
-  console.log(state);
+  console.log("Login state:", state);
 
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = async (data: TLoginSchema) => {
-    try {
-      setIsLoading(true);
+  useEffect(() => {
+    if (!state.message) return;
 
-      await signIn("credentials", {
-        username: data.username,
-        password: data.password,
+    if (state?.success) {
+      Promise.resolve().then(() => {
+        toaster.success({
+          title: state.message,
+          duration: 3000,
+          closable: true,
+        });
       });
-
-      toaster.success({
-        title: "Login success",
-        duration: 3000,
-        closable: true,
+      router.refresh();
+    } else {
+      Promise.resolve().then(() => {
+        toaster.error({
+          title: state.message,
+          duration: 3000,
+          closable: true,
+        });
       });
-    } catch (error) {
-      toaster.error({
-        title: "Login failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please review your information",
-        duration: 3000,
-        closable: true,
-      });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [state, router]);
 
   return (
-    <form action={action} onSubmit={handleSubmit(onSubmit)}>
+    <form action={action}>
       <Stack className="flex flex-row justify-center max-w-4xl mx-auto border border-gray-700 rounded-lg shadow-lg bg-gray-900 overflow-hidden">
         <Flex className="p-8 flex-col flex-1 flex space-y-6 justify-center">
           <Fieldset.Root className="mb-6" invalid={!!errors.username}>
@@ -73,7 +67,7 @@ const LoginForm = () => {
               <Field.Label>Username</Field.Label>
               <Input
                 type="text"
-                disabled={isLoading}
+                disabled={isPending}
                 placeholder="Enter your email or phone number"
                 {...register("username")}
               />
@@ -83,7 +77,7 @@ const LoginForm = () => {
             <Field.Root className="mb-6" invalid={!!errors.password}>
               <Field.Label>Password</Field.Label>
               <PasswordInput
-                disabled={isLoading}
+                disabled={isPending}
                 placeholder="Enter your password"
                 {...register("password")}
               />
@@ -96,7 +90,7 @@ const LoginForm = () => {
             size="md"
             width="full"
             type="submit"
-            loading={isLoading}
+            loading={isPending}
             loadingText="Login..."
           >
             Sign in

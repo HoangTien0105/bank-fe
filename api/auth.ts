@@ -1,8 +1,4 @@
-import { LogoutResponse } from "@/app/login/_types/auth";
-import { auth } from "@/auth";
 import axiosInstance from "@/config/axios";
-import { BASE_API_URL } from "@/constant/api";
-import { NextRequest, NextResponse } from "next/server";
 
 export const login = async (payload: {
   username: string;
@@ -34,7 +30,10 @@ export const logout = async () => {
   } catch (error) {
     console.error("Logout API error:", error);
     // Không throw error để không block NextAuth logout
-    return { success: false, error: error instanceof Error ? error.message :"Unknown error" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
