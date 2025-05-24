@@ -59,3 +59,13 @@ export const getAllTransactions = async (
     return null;
   }
 };
+
+export const getTransactionById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/transactions/${id}`);
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
