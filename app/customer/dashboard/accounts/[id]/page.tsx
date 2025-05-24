@@ -13,7 +13,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { CreditCard } from "lucide-react";
+import { ArrowLeft, CreditCard } from "lucide-react";
+import Link from "next/link";
 import { BiCalendar } from "react-icons/bi";
 import { FaLandmark } from "react-icons/fa";
 import { LuArrowUpDown } from "react-icons/lu";
@@ -77,7 +78,12 @@ const AccountDetailsPage = async ({
           <CardBody>
             <VStack align="stretch">
               <Flex justifyContent="space-between" alignItems="center">
-                <Heading size="md">{account.accountType}</Heading>
+                <Flex alignItems="center" gap={2}>
+                  <Link href="/customer/dashboard/accounts">
+                    <ArrowLeft size={20} />
+                  </Link>
+                  <Heading size="md">{account.accountType}</Heading>
+                </Flex>
                 <Text fontWeight="bold" fontSize="xl">
                   {account.balance.toLocaleString("vi-VN", {
                     minimumFractionDigits: 2,
@@ -126,7 +132,10 @@ const AccountDetailsPage = async ({
                         Transaction Limit
                       </Text>
                       <Text fontWeight="medium">
-                        {account.transactionLimit.toLocaleString("vi-VN")} VND
+                        {account.transactionLimit !== null
+                          ? account.transactionLimit.toLocaleString("vi-VN")
+                          : "NULL"}{" "}
+                        VND
                       </Text>
                     </Box>
                   </Flex>

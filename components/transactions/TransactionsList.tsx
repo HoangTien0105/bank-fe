@@ -154,7 +154,7 @@ const TransactionsList = ({
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </Table.Cell>
                       <Table.Cell>{item.type}</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell suppressHydrationWarning>
                         {typeof item.amount === "number"
                           ? item.amount.toLocaleString("vn-VN", {
                               minimumFractionDigits: 2,
@@ -163,7 +163,7 @@ const TransactionsList = ({
                         VNĐ
                       </Table.Cell>
                       <Table.Cell>{item.location}</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell suppressHydrationWarning>
                         {new Date(item.transactionDate).toLocaleDateString()}
                       </Table.Cell>
                       <Table.Cell>{item.description}</Table.Cell>
