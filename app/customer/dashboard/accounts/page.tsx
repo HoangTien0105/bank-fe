@@ -6,6 +6,7 @@ import {
   Card,
   CardBody,
   Flex,
+  Link,
   Stack,
   Text,
   VStack,
@@ -28,9 +29,7 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
     limit: itemsPerPage,
   });
 
-  console.log(response);
   const accounts = response?.results || [];
-  // const totalItems = response?.totalRows || 0;
   const totalPages = response?.totalPages || 1;
 
   const cardBg = "bg";
@@ -81,14 +80,22 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
                       <VStack fontWeight="bold" fontSize="lg">
                         {account.balance.toLocaleString("vi-VN", {
                           minimumFractionDigits: 2,
-                        })} VND
+                        })}{" "}
+                        VND
                         <Flex
                           alignItems="center"
                           justifyContent="flex-end"
                           color="blue.500"
                           mt={1}
                         >
-                          <Text fontSize="sm">View details</Text>
+                          <Link
+                            href={`/customer/dashboard/accounts/${account.id}`}
+                            key={account.id}
+                            fontSize="lg"
+                            color="blue.500"
+                          >
+                            View details
+                          </Link>
                           <ChevronRight size={16} />
                         </Flex>
                       </VStack>
