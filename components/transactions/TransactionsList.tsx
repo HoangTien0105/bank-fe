@@ -118,6 +118,7 @@ const TransactionsList = ({
                   bg={headerBg}
                   zIndex={1}
                   boxShadow="sm"
+                  suppressHydrationWarning
                 >
                   <Table.Row>
                     <Table.ColumnHeader>ID</Table.ColumnHeader>
@@ -142,6 +143,7 @@ const TransactionsList = ({
                     <Table.Row
                       key={item.id}
                       cursor="pointer"
+                      suppressHydrationWarning
                       _hover={{
                         bg: hoverBg,
                         transform: "translateY(-1px)",

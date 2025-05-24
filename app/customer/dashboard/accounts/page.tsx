@@ -6,12 +6,12 @@ import {
   Card,
   CardBody,
   Flex,
-  Link,
   Stack,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { ChevronRight, CreditCard } from "lucide-react";
+import Link from "next/link";
 
 interface AccountsPageProps {
   searchParams?: {
@@ -21,7 +21,8 @@ interface AccountsPageProps {
 
 const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
   const itemsPerPage = 5;
-  const currentPage = Number(searchParams?.page) || 1;
+  const page = await searchParams;
+  const currentPage = Number(page?.page) || 1;
   const offset = (currentPage - 1) * itemsPerPage;
 
   const response = await getAllAccounts({
@@ -87,11 +88,12 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
                           justifyContent="flex-end"
                           color="blue.500"
                           mt={1}
+                          w="full"
+                          gap={1}
                         >
                           <Link
                             href={`/customer/dashboard/accounts/${account.id}`}
                             key={account.id}
-                            fontSize="lg"
                             color="blue.500"
                           >
                             View details
