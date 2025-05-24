@@ -1,23 +1,30 @@
-"use client";
-
-import { useColorModeValue } from "../ui/color-mode";
 import { clearSession } from "@/utils/session";
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { HiCog } from "react-icons/hi";
 
-export const Hamburger = () => {
-  const router = useRouter();
+export const Hamburger = async () => {
 
   const handleLogout = async () => {
-    await clearSession();
-    router.push("/login");
+    try {
+      // Gọi clearSession để xử lý logout ở backend
+      await clearSession();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
-        <Button suppressHydrationWarning shadow="md" borderRadius="md" cursor="pointer" variant="outline" size="sm">
+        <Button
+          suppressHydrationWarning
+          shadow="md"
+          borderRadius="md"
+          cursor="pointer"
+          variant="outline"
+          size="sm"
+        >
           <HiCog />
         </Button>
       </Menu.Trigger>
