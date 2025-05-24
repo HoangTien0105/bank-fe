@@ -51,7 +51,7 @@ export default async function middleware(req: NextRequest) {
       const allowedRoles = roleProtectedRoutes[matchedRoute];
       if (!allowedRoles.includes(userRole.toLowerCase())) {
         // Role not authorized
-        return NextResponse.redirect(new URL("/login", req.nextUrl)); // or /login
+        return NextResponse.redirect(new URL("/unauthorized", req.nextUrl)); // or /login
       }
     } catch (error) {
       // Invalid token, redirect to login
