@@ -46,7 +46,7 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
         </Box>
       ) : (
         <Stack>
-          <VStack align="stretch">
+          <VStack align="stretch" userSelect="none">
             {accounts.map((account: Accounts) => (
               <Card.Root
                 key={account.id}
@@ -78,7 +78,7 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
                       </Flex>
                     </Box>
                     <Box textAlign="right">
-                      <VStack fontWeight="bold" fontSize="lg">
+                      <VStack fontWeight="bold" fontSize="lg" userSelect="none">
                         {account.balance.toLocaleString("vi-VN", {
                           minimumFractionDigits: 2,
                         })}{" "}
@@ -90,6 +90,7 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
                           mt={1}
                           w="full"
                           gap={1}
+                          userSelect="none"
                         >
                           <Link
                             href={`/customer/dashboard/accounts/${account.id}`}

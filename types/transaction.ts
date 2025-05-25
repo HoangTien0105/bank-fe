@@ -16,3 +16,9 @@ export interface TransferRequest {
   description: string;
   amount: number;
 }
+
+export interface DepositOrWithdrawRequest {
+  accountId: string;
+  location: string;
+  amount: number;
+}
