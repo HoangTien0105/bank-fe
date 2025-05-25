@@ -57,20 +57,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user = token as any;
       return session;
     },
-    // async authorized({ auth }) {
-    //   return !!auth;
-    // },
   },
   events: {
-    async signOut(event) {
-      const token = "token" in event ? event.token : null;
+    async signOut() {
+      // const token = "token" in event ? event.token : null;
       try {
         const result = await logout();
 
-        if (result.success !== false) {
+        if (result.success) {
           console.log("Backend logout successful");
         } else {
-          console.warn("Backend logout failed:", result.error);
+          console.error("Backend logout failed:", result.error);
         }
       } catch (error) {
         console.error("Logout event error:", error);
