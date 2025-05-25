@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight, LuSearch, LuX } from "react-icons/lu";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import TransactionDetail from "./TransactionDetails";
 
 interface TransactionsListProps {
   transactions: Transaction[];
@@ -50,6 +51,10 @@ const TransactionsList = ({
   const searchParams = useSearchParams();
   const itemsPerPage = 8;
 
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const headerBg = useColorModeValue("gray.100", "gray.800");
   const hoverBg = useColorModeValue("gray.50", "gray.600");
 
@@ -62,6 +67,15 @@ const TransactionsList = ({
       params.set("page", details.page.toString());
       router.push(`${pathname}?${params.toString()}`);
     }
+  };
+
+  const handleTransactionClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -104,6 +118,7 @@ const TransactionsList = ({
                   bg={headerBg}
                   zIndex={1}
                   boxShadow="sm"
+                  suppressHydrationWarning
                 >
                   <Table.Row>
                     <Table.ColumnHeader>ID</Table.ColumnHeader>
@@ -118,26 +133,30 @@ const TransactionsList = ({
                     <Table.ColumnHeader minWidth={"250px"}>
                       Description
                     </Table.ColumnHeader>
+                    <Table.ColumnHeader>From</Table.ColumnHeader>
+                    <Table.ColumnHeader>To</Table.ColumnHeader>
                   </Table.Row>
                 </Table.Header>
 
-                <Table.Body>
+                <Table.Body userSelect="none">
                   {transactions.map((item, index) => (
                     <Table.Row
                       key={item.id}
                       cursor="pointer"
+                      suppressHydrationWarning
                       _hover={{
                         bg: hoverBg,
                         transform: "translateY(-1px)",
                         boxShadow: "sm",
                         transition: "all 0.2s ease-in-out",
                       }}
+                      onClick={() => handleTransactionClick(item)}
                     >
                       <Table.Cell>
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </Table.Cell>
                       <Table.Cell>{item.type}</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell suppressHydrationWarning>
                         {typeof item.amount === "number"
                           ? item.amount.toLocaleString("vn-VN", {
                               minimumFractionDigits: 2,
@@ -146,10 +165,18 @@ const TransactionsList = ({
                         VNĐ
                       </Table.Cell>
                       <Table.Cell>{item.location}</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell suppressHydrationWarning>
                         {new Date(item.transactionDate).toLocaleDateString()}
                       </Table.Cell>
                       <Table.Cell>{item.description}</Table.Cell>
+                      <Table.Cell>
+                        {item.fromAccountId !== null
+                          ? item.fromAccountId
+                          : "NULL"}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {item.toAccountId !== null ? item.toAccountId : "NULL"}
+                      </Table.Cell>
                     </Table.Row>
                   ))}
                 </Table.Body>
@@ -187,6 +214,12 @@ const TransactionsList = ({
           </Pagination.Root>
         </Stack>
       )}
+
+      <TransactionDetail
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        transaction={selectedTransaction}
+      />
     </Box>
   );
 };

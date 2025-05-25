@@ -1,8 +1,9 @@
 "use client";
 
 import { Button, Menu, Portal } from "@chakra-ui/react";
+import { signOut } from "next-auth/react";
 import { HiCog } from "react-icons/hi";
-import { logoutAction } from "./action";
+
 export const Hamburger = () => {
   return (
     <Menu.Root>
@@ -30,7 +31,7 @@ export const Hamburger = () => {
                 cursor: "pointer",
               }}
               onClick={async () => {
-                await logoutAction();
+                await signOut();
               }}
             >
               Logout

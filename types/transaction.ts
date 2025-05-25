@@ -5,4 +5,6 @@ export interface Transaction {
   transactionDate: string;
   location: string;
   description: string;
+  fromAccountId: string;
+  toAccountId: string;
 }
