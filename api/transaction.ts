@@ -1,6 +1,6 @@
 import axiosInstance from "@/config/axios";
 import { PaginationRequest } from "@/types/pagination";
-import { TransferRequest } from "@/types/transaction";
+import { DepositOrWithdrawRequest, TransferRequest } from "@/types/transaction";
 
 export const getTransactionsByAccountById = async (
   id: string,
@@ -72,11 +72,40 @@ export const getTransactionById = async (id: string) => {
 };
 
 export const transferMoney = async (transferData: TransferRequest) => {
-  try{
-    const response = await axiosInstance.post('/transactions/transfer', transferData);
+  try {
+    const response = await axiosInstance.post(
+      "/transactions/transfer",
+      transferData
+    );
     return response.data.response;
   } catch (error) {
     console.log(error);
     return null;
   }
-}
+};
+
+export const depositMoney = async (depositData: DepositOrWithdrawRequest) => {
+  try {
+    const response = await axiosInstance.post(
+      "/transactions/deposit",
+      depositData
+    );
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const withdrawMoney = async (withdrawData: DepositOrWithdrawRequest) => {
+  try {
+    const response = await axiosInstance.post(
+      "/transactions/withdraw",
+      withdrawData
+    );
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

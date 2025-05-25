@@ -37,7 +37,7 @@ const Page = async () => {
             <Avatar.Image src="https://i.pravatar.cc/150?img=23" />
           </Avatar.Root>
 
-          <Box>
+          <Box userSelect="none">
             <Heading size="lg" mb={3} color="gray.100">
               {profile?.name}
             </Heading>
@@ -74,7 +74,7 @@ const Page = async () => {
           </Box>
         </Flex>
 
-        <Box w="full">
+        <Box w="full" userSelect="none">
           <Heading size="md" mb={6} color="gray.200">
             Personal Information
           </Heading>

@@ -220,12 +220,30 @@ const TransferForm = () => {
     <Box>
       <Card.Root>
         <Card.Body>
-          {!isConfirmStep ? (
+          {transferResult ? (
+            <Stack gap={4} align="center">
+              <Heading
+                size="md"
+                color={transferResult.success ? "green.500" : "red.500"}
+              >
+                {transferResult.success ? "Sucess!" : "Error"}
+              </Heading>
+              <Text>{transferResult.message}</Text>
+              {transferResult.success && (
+                <Text fontSize="sm">
+                  Transaction ID: {transferResult.transactionId}
+                </Text>
+              )}
+              <Text fontSize="sm">
+                Redirecting to transaction page:
+              </Text>
+            </Stack>
+          ) : !isConfirmStep ? (
             <Stack gap={4}>
               <Fieldset.Root>
-                <Fieldset.Legend>Receiver Info</Fieldset.Legend>
+                <Fieldset.Legend userSelect="none">Receiver Info</Fieldset.Legend>
                 <Box position="relative">
-                  <InputGroup>
+                  <InputGroup userSelect="none">
                     <Input
                       placeholder="Input receiver information"
                       value={formData.searchValue}
@@ -286,11 +304,11 @@ const TransferForm = () => {
                     <Box mt={2} p={2} borderWidth={1} borderRadius="md">
                       <Flex justify="space-between">
                         <Box>
-                          <Text fontWeight="bold">
+                          <Text fontWeight="bold" userSelect="none">
                             Account: {selectedReceiver.accountId}
                           </Text>
-                          <Text fontSize="sm">{selectedReceiver.name}</Text>
-                          <Text fontSize="sm">
+                          <Text fontSize="sm" userSelect="none">{selectedReceiver.name}</Text>
+                          <Text fontSize="sm" userSelect="none">
                             Phone: {selectedReceiver.phone}
                           </Text>
                         </Box>
@@ -309,8 +327,8 @@ const TransferForm = () => {
               {checkingAccount && (
                 <Box p={3} borderWidth={1} borderRadius="md" bg="gray.700">
                   <Flex justify="space-between">
-                    <Text fontWeight="bold">Your Account:</Text>
-                    <Text>{checkingAccount.id}</Text>
+                    <Text fontWeight="bold" userSelect="none">Your Account:</Text>
+                    <Text userSelect="none">{checkingAccount.id}</Text>
                   </Flex>
                 </Box>
               )}
@@ -325,7 +343,7 @@ const TransferForm = () => {
                   }}
                   width="full"
                 >
-                  <Flex>
+                  <Flex userSelect="none">
                     <NumberInputInput textAlign="left" />
                     <Box
                       position="absolute"
@@ -340,7 +358,7 @@ const TransferForm = () => {
                     </Box>
                   </Flex>
                 </NumberInput.Root>
-                <Field.HelperText>
+                <Field.HelperText userSelect="none">
                   {isLoadingAccount
                     ? "Loading account information..."
                     : checkingAccount
@@ -358,6 +376,7 @@ const TransferForm = () => {
                     handleInputChange("location", details.value[0])
                   }
                   size="md"
+                  userSelect="none"
                 >
                   <Select.HiddenSelect />
                   <Select.Control>
@@ -381,7 +400,7 @@ const TransferForm = () => {
                 </Select.Root>
               </Field.Root>
 
-              <Field.Root>
+              <Field.Root userSelect="none">
                 <Field.Label>Message</Field.Label>
                 <Textarea
                   value={formData.message}
@@ -414,9 +433,7 @@ const TransferForm = () => {
                 <Stack gap={3}>
                   <Flex justify="space-between">
                     <Text fontWeight="bold">From Account:</Text>
-                    <Text>
-                      {checkingAccount?.id}
-                    </Text>
+                    <Text>{checkingAccount?.id}</Text>
                   </Flex>
 
                   <Flex justify="space-between">
