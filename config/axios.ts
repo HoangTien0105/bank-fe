@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { BASE_API_URL } from "@/constant/api";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const timeoutDuration = 60 * 1000;
 
@@ -32,13 +33,18 @@ axiosInstance.interceptors.request.use(
       return config;
     }
 
-    const expiredTime = user.exp;
-    const now = new Date().getTime();
+    try {
+      const decodedToken = jwtDecode(user.accessToken);
+      const tokenExp = decodedToken.exp as number; // Thời gian hết hạn thực tế của access token
 
-    if (expiredTime < now) {
-      console.log("Access token expired");
+      const now = Math.floor(Date.now() / 1000); // Chuyển đổi thành giây
+      if (tokenExp < now) {
+        console.log("Access token expired");
+        // Xử lý refresh token
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
     }
-
     config.headers.setAuthorization(`Bearer ${user.accessToken}`);
 
     return config;

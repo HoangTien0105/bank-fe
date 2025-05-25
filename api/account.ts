@@ -27,3 +27,12 @@ export const getAccountById = async (id: string) => {
     console.log(error);
   }
 };
+
+export const getCheckingAccount = async () => {
+  try {
+    const response = await axiosInstance.get(`/accounts/customer`);
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+  }
+}

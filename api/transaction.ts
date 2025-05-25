@@ -1,5 +1,6 @@
 import axiosInstance from "@/config/axios";
 import { PaginationRequest } from "@/types/pagination";
+import { TransferRequest } from "@/types/transaction";
 
 export const getTransactionsByAccountById = async (
   id: string,
@@ -69,3 +70,13 @@ export const getTransactionById = async (id: string) => {
     return null;
   }
 };
+
+export const transferMoney = async (transferData: TransferRequest) => {
+  try{
+    const response = await axiosInstance.post('/transactions/transfer', transferData);
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

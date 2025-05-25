@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest) {
 
   // Check if the path is protected
   const matchedRoute = Object.keys(roleProtectedRoutes).find((route) =>
-    pathname.startsWith(route),
+    pathname.startsWith(route)
   );
 
   if (matchedRoute) {

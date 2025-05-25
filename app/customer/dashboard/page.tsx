@@ -8,7 +8,7 @@ const Page = async () => {
 
   return (
     <Box className="w-full h-full p-6">
-      <VStack>
+      <VStack suppressHydrationWarning>
         <Flex
           w="full"
           alignItems="center"
