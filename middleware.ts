@@ -1,26 +1,6 @@
-// export { auth as middleware } from "@/auth";
-
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 import { jwtDecode } from "jwt-decode";
-
-// export default async function middleware(req: NextRequest) {
-//   const protectedRoutes = ["/admin", "/customer"];
-//   const currentPath = req.nextUrl.pathname;
-//   const isProtectedRoute = protectedRoutes.includes(currentPath);
-//
-//   if (isProtectedRoute) {
-//     const session = await auth();
-//     const user = session?.user;
-//     const decodedToken = jwtDecode(session?.user.accessToken || "");
-//
-//     if (!user) {
-//       return NextResponse.redirect(new URL("/login", req.nextUrl));
-//     }
-//   }
-//
-//   return NextResponse.next();
-// }
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
