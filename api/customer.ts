@@ -10,3 +10,14 @@ export const getAllCustomers = async () => {
     throw new Error("Get all customers failed");
   }
 };
+export const searchCustomer = async (search: string) => {
+  try {
+    const response = await axiosInstance.get(`/customers/search`, {
+      params: { search }
+    });
+    return response.data.response;
+  } catch (error) {
+    console.log(error);
+    return { results: [] };
+  }
+};

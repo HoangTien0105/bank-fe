@@ -60,7 +60,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signOut() {
-      // const token = "token" in event ? event.token : null;
       try {
         const result = await logout();
 

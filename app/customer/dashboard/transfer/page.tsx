@@ -1,9 +1,11 @@
 import { Box, Heading } from "@chakra-ui/react";
+import TransferForm from "../../_components/TransferForm";
 
 const TransferPage = async () => {
   return (
     <Box>
-      <Heading> Welcome to transfer page</Heading>
+      <Heading mb={6}>Transfer</Heading>
+      <TransferForm />
     </Box>
   );
 };

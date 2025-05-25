@@ -8,3 +8,11 @@ export interface Transaction {
   fromAccountId: string;
   toAccountId: string;
 }
+
+export interface TransferRequest {
+  fromAccountId: string;
+  toAccountId: string;
+  location: string;
+  description: string;
+  amount: number;
+}
