@@ -95,12 +95,10 @@ const RegisterForm = () => {
             </Text>
           </Box>
 
-          {/* Form Content */}
           <Box px={8} py={6}>
             <VStack gap={6}>
               <Fieldset.Root w="full">
                 <VStack gap={5} align="stretch">
-                  {/* Personal Information Section */}
                   <Box>
                     <Text
                       fontSize="sm"
