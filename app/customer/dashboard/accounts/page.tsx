@@ -3,14 +3,16 @@ import PaginationComponent from "@/components/common/Pagination";
 import { Accounts } from "@/types/accounts";
 import {
   Box,
+  Button,
   Card,
   CardBody,
   Flex,
+  Heading,
   Stack,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { ChevronRight, CreditCard } from "lucide-react";
+import { ChevronRight, CreditCard, Plus } from "lucide-react";
 import Link from "next/link";
 
 interface AccountsPageProps {
@@ -28,6 +30,8 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
   const response = await getAllAccounts({
     offset,
     limit: itemsPerPage,
+    sortBy: "type",
+    sortDirection: "ASC"
   });
 
   const accounts = response?.results || [];
@@ -40,6 +44,15 @@ const AccountsPage = async ({ searchParams }: AccountsPageProps) => {
 
   return (
     <Box w="full" maxW="4xl" margin="auto">
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
+        <Heading size="md">Your accounts</Heading>
+        <Link href="/customer/dashboard/accounts/saving">
+          <Button colorScheme="blue" size="sm">
+            <Plus size={16} />
+            Create saving accounts
+          </Button>
+        </Link>
+      </Flex>
       {accounts.length === 0 ? (
         <Box textAlign="center" py={10}>
           <Text fontSize="lg">You don't have any accounts</Text>

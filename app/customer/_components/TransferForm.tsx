@@ -25,7 +25,7 @@ import {
   getCheckingAccountByCustomerId,
   searchCustomerInfo,
   transferMoneyForCustomer,
-} from "../dashboard/transfer/action";
+} from "../action";
 import { useRouter } from "next/navigation";
 
 interface ReceiverInfo {

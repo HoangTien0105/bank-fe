@@ -17,12 +17,9 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {
-  getCheckingAccountByCustomerId,
-  depositMoneyForCustomer,
-  withdrawMoneyForCustomer,
-} from "../dashboard/funds/action";
+
 import { useRouter } from "next/navigation";
+import { depositMoneyForCustomer, getCheckingAccountByCustomerId, withdrawMoneyForCustomer } from "../action";
 
 interface FormData {
   amount: number;

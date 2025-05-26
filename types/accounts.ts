@@ -11,3 +11,10 @@ export interface Accounts {
   savingScheduleDay: number;
   monthlyDepositAmount: number
 }
+
+export interface CreateSavingAccountRequest {
+  sourceAccountId: string;
+  amount: number;
+  termMonths: number;
+  monthlyDepositAmount?: number ;
+}
