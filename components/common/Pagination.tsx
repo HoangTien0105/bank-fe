@@ -28,7 +28,6 @@ const PaginationControls = ({ currentPage, totalPages }: PaginationControlsProps
           </IconButton>
         </Link>
 
-        {/* Page Numbers */}
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <Link key={page} href={createPageURL(page)}>
             <IconButton
@@ -42,7 +41,6 @@ const PaginationControls = ({ currentPage, totalPages }: PaginationControlsProps
           </Link>
         ))}
 
-        {/* Next Button */}
         <Link href={createPageURL(currentPage + 1)}>
           <IconButton 
             aria-label="Next page"

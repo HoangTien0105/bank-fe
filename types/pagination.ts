@@ -3,6 +3,8 @@ export type PaginationRequest = {
   limit?: number;
   keyword?: string;
   location?: string;
+  type?: string;
+  status?: string;
   minAmount?: number;
   maxAmount?: number;
   sortBy?: string;
