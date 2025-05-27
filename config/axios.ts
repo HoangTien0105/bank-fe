@@ -57,7 +57,6 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    // console.log("--After response--");
     return response;
   },
   async (error) => {

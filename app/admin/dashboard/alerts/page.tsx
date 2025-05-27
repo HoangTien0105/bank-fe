@@ -2,12 +2,26 @@ import { getAllAlerts } from "@/api/alert";
 import PaginationComponent from "@/components/common/Pagination";
 import { Alert } from "@/types/alert";
 import { formatDateTime } from "@/utils/date";
-import { Box, Heading, Table, Badge, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Table,
+  Badge,
+  Text,
+  Flex,
+  Field,
+  Input,
+  Button,
+} from "@chakra-ui/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 interface AlertsPageProps {
   searchParams?: {
     page?: string;
+    keyword?: string;
+    alertType?: string;
+    status?: string;
   };
 }
 
@@ -24,18 +38,40 @@ const getStatusColor = (status: string) => {
   }
 };
 
+async function handleSearch(formData: FormData) {
+  "use server";
+
+  const keyword = formData.get("keyword")?.toString() || "";
+  const alertType = formData.get("alertType")?.toString() || "";
+  const status = formData.get("status")?.toString() || "";
+
+  const searchParams = new URLSearchParams();
+  if (keyword) searchParams.set("keyword", keyword);
+  if (alertType) searchParams.set("alertType", alertType);
+  if (status) searchParams.set("status", status);
+  searchParams.set("page", "1");
+
+  redirect(`/admin/dashboard/alerts?${searchParams.toString()}`);
+}
+
 const AlertsPage = async ({ searchParams }: AlertsPageProps) => {
   const itemsPerPage = 10;
-  const page = await searchParams;
-  const currentPage = Number(page?.page) || 1;
+  const params = await searchParams;
+  const currentPage = Number(params?.page) || 1;
   const offset = (currentPage - 1) * itemsPerPage;
+  const keyword = params?.keyword;
+  const alertType = params?.alertType;
+  const status = params?.status;
 
   const response = await getAllAlerts({
     offset,
     limit: itemsPerPage,
-    sortBy: "createDate",
-    sortDirection: "DESC"
+    keyword: keyword,
+    type: alertType,
+    status: status,
   });
+
+  console.log(response);
 
   const alerts = response?.results || [];
   const totalPages = response?.totalPages || 1;
@@ -45,7 +81,48 @@ const AlertsPage = async ({ searchParams }: AlertsPageProps) => {
       <Heading size="lg" mb={6}>
         All Alerts
       </Heading>
-      
+
+      <Box mb={6} p={4} borderWidth="1px" borderRadius="lg">
+        <form action={handleSearch}>
+          <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            <Field.Root flex={1}>
+              <Field.Label>Keyword</Field.Label>
+              <Input
+                name="keyword"
+                placeholder="Search"
+                defaultValue={keyword || ""}
+              />
+            </Field.Root>
+
+            <Field.Root flex={1}>
+              <Field.Label>Type</Field.Label>
+              <Input
+                name="alertType"
+                placeholder="Type"
+                defaultValue={alertType || ""}
+              />
+            </Field.Root>
+
+            <Field.Root flex={1}>
+              <Field.Label>Status</Field.Label>
+              <Input
+                name="status"
+                placeholder="Status"
+                defaultValue={status || ""}
+              />
+            </Field.Root>
+          </Flex>
+
+          <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            <Field.Root flex={1} display="flex" alignItems="flex-end">
+              <Button type="submit" colorScheme="blue" width="full">
+                Search
+              </Button>
+            </Field.Root>
+          </Flex>
+        </form>
+      </Box>
+
       {alerts.length === 0 ? (
         <Box textAlign="center" py={10}>
           <Text fontSize="lg">No alerts found</Text>
@@ -66,11 +143,14 @@ const AlertsPage = async ({ searchParams }: AlertsPageProps) => {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {alerts.map((alert : Alert) => (
+              {alerts.map((alert: Alert) => (
                 <Table.Row key={alert.id} cursor="pointer">
                   <Table.Cell>
                     <Link href={`/admin/dashboard/alerts/${alert.id}`}>
-                      <Text color="blue.500" _hover={{ textDecoration: "underline" }}>
+                      <Text
+                        color="blue.500"
+                        _hover={{ textDecoration: "underline" }}
+                      >
                         {alert.id}
                       </Text>
                     </Link>
@@ -87,7 +167,9 @@ const AlertsPage = async ({ searchParams }: AlertsPageProps) => {
                   </Table.Cell>
                   <Table.Cell>{formatDateTime(alert.createDate)}</Table.Cell>
                   <Table.Cell>
-                    {alert.processedDate ? formatDateTime(alert.processedDate) : "N/A"}
+                    {alert.processedDate
+                      ? formatDateTime(alert.processedDate)
+                      : "N/A"}
                   </Table.Cell>
                   <Table.Cell>{alert.processedBy || "N/A"}</Table.Cell>
                 </Table.Row>
