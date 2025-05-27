@@ -40,7 +40,6 @@ const AccountDetailsPage = async ({
   const offset = (page - 1) * itemsPerPage;
 
   const account = await getAccountById(id);
-
   const apiParams = {
     offset,
     limit: itemsPerPage,
@@ -122,38 +121,128 @@ const AccountDetailsPage = async ({
                   </Flex>
                 </GridItem>
 
-                <GridItem>
-                  <Flex alignItems="center" gap={3}>
-                    <Box p={2} bg={iconBg} borderRadius="md">
-                      <LuArrowUpDown size={20} color={iconColor} />
-                    </Box>
-                    <Box>
-                      <Text fontSize="sm" color="gray.500">
-                        Transaction Limit
-                      </Text>
-                      <Text fontWeight="medium">
-                        {account.transactionLimit !== null
-                          ? account.transactionLimit.toLocaleString("vi-VN")
-                          : "NULL"}{" "}
-                        VND
-                      </Text>
-                    </Box>
-                  </Flex>
-                </GridItem>
+                {account.balanceType && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <FaLandmark size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Balance Type
+                        </Text>
+                        <Text fontWeight="medium">{account.balanceType}</Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
+                {account.transactionLimit && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <LuArrowUpDown size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Transaction Limit
+                        </Text>
+                        <Text fontWeight="medium">
+                          {account.transactionLimit !== null
+                            ? account.transactionLimit.toLocaleString("vi-VN")
+                            : "NULL"}{" "}
+                          VND
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
 
-                <GridItem>
-                  <Flex alignItems="center" gap={3}>
-                    <Box p={2} bg={iconBg} borderRadius="md">
-                      <FaLandmark size={20} color={iconColor} />
-                    </Box>
-                    <Box>
-                      <Text fontSize="sm" color="gray.500">
-                        Interest rate
-                      </Text>
-                      <Text fontWeight="medium">{account.interestRate}%</Text>
-                    </Box>
-                  </Flex>
-                </GridItem>
+                {account.interestRate && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <FaLandmark size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Interest rate
+                        </Text>
+                        <Text fontWeight="medium">{account.interestRate}%</Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
+
+                {account.maturiryDate && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <BiCalendar size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Maturity Date
+                        </Text>
+                        <Text fontWeight="medium">
+                          {new Date(account.maturiryDate).toLocaleDateString()}
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
+
+                {account.sourceAccount && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <CreditCard size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Source Account
+                        </Text>
+                        <Text fontWeight="medium">{account.sourceAccount}</Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
+
+                {account.savingScheduleDay && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <BiCalendar size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Saving Schedule Day
+                        </Text>
+                        <Text fontWeight="medium">
+                          {account.savingScheduleDay}
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
+
+                {account.monthlyDepositAmount && (
+                  <GridItem>
+                    <Flex alignItems="center" gap={3}>
+                      <Box p={2} bg={iconBg} borderRadius="md">
+                        <LuArrowUpDown size={20} color={iconColor} />
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" color="gray.500">
+                          Monthly Deposit Amount
+                        </Text>
+                        <Text fontWeight="medium">
+                          {account.monthlyDepositAmount.toLocaleString("vi-VN")}{" "}
+                          VND
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </GridItem>
+                )}
               </Grid>
             </VStack>
           </CardBody>

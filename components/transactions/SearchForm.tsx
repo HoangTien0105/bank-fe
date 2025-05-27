@@ -239,6 +239,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
       margin="auto"
       position="relative"
       zIndex="10"
+      userSelect="none"
     >
       <Flex mb={4} gap={2}>
         <InputGroup

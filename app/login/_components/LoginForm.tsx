@@ -9,6 +9,7 @@ import {
   Image,
   Input,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ import { loginAction } from "../actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
+import Link from "next/link";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -95,6 +97,13 @@ const LoginForm = () => {
           >
             Sign in
           </Button>
+
+          <Flex justify="center" mt={4}>
+            <Text>Don't have an account? </Text>
+            <Link href="/register" className="text-blue-500 hover:text-blue-600 ml-1">
+              Register
+            </Link>
+          </Flex>
         </Flex>
         <Flex className="flex-1 hidden md:block caret-transparent">
           <Image

@@ -20,7 +20,6 @@ const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <Box className="w-full flex min-h-screen m-2">
       <Sidebar navItems={navItems} />
 
-      {/* Main content */}
       <Box className="w-5/6 p-6">{children}</Box>
     </Box>
   );
