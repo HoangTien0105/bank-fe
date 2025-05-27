@@ -1,13 +1,11 @@
-import { getAllTransactions } from "@/api/transaction";
-import SearchForm from "@/components/transactions/SearchForm";
-import TransactionsList from "@/components/transactions/TransactionsList";
-import { TransactionsPageProps } from "@/types/transaction";
+import { getAllAccounts } from "@/api/account";
+import AccountsList from "@/components/accounts/AccountList";
+import SearchForm from "@/components/accounts/SearchForm";
+import { AccountPageProps } from "@/types/accounts";
 import { Box, Flex, Spinner } from "@chakra-ui/react";
 import { Suspense } from "react";
 
-const TransactionsPage = async ({
-  searchParams = {},
-}: TransactionsPageProps) => {
+const AccountPage = async ({ searchParams = {} }: AccountPageProps) => {
   const params = await searchParams;
   const page = params.page ? parseInt(params.page) : 1;
   const itemsPerPage = 8;
@@ -17,15 +15,14 @@ const TransactionsPage = async ({
     offset,
     limit: itemsPerPage,
     keyword: params.keyword,
-    location: params.location,
-    minAmount: params.minAmount ? parseFloat(params.minAmount) : undefined,
-    maxAmount: params.maxAmount ? parseFloat(params.maxAmount) : undefined,
+    balanceType: params.balanceType,
+    accountType: params.accountType,
     sortBy: params.sortBy,
     sortDirection: params.sortDirection as "ASC" | "DESC" | undefined,
   };
 
-  const response = await getAllTransactions(apiParams);
-  const transactions = response?.results || [];
+  const response = await getAllAccounts(apiParams);
+  const accounts = response?.results || [];
   const totalItems = response?.totalRows || 0;
   const totalPages = response?.totalPages || 1;
 
@@ -36,17 +33,16 @@ const TransactionsPage = async ({
           <SearchForm
             initialValues={{
               keyword: params.keyword,
-              location: params.location,
-              minAmount: params.minAmount,
-              maxAmount: params.maxAmount,
+              balanceType: params.balanceType,
+              accountType: params.accountType,
               sortBy: params.sortBy,
               sortDirection: params.sortDirection,
             }}
           />
 
-          <TransactionsList
-            title="Transaction History"
-            transactions={transactions}
+          <AccountsList
+            title="Accounts"
+            accounts={accounts}
             totalItems={totalItems}
             totalPages={totalPages}
             currentPage={page}
@@ -57,4 +53,4 @@ const TransactionsPage = async ({
   );
 };
 
-export default TransactionsPage;
+export default AccountPage;
