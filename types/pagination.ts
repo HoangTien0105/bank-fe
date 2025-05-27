@@ -4,9 +4,11 @@ export type PaginationRequest = {
   keyword?: string;
   location?: string;
   type?: string;
+  balanceType?: string;
+  accountType?: string;
   status?: string;
   minAmount?: number;
   maxAmount?: number;
   sortBy?: string;
-  sortDirection?: 'asc' | 'desc' | 'ASC' | 'DESC';
+  sortDirection?: "asc" | "desc" | "ASC" | "DESC";
 };
