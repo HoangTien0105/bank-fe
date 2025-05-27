@@ -16,8 +16,8 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
-    // console.log("--Before request--");
-    // console.log("Config", config);
+    console.log("--Before request--");
+    console.log("Config", config);
 
     if (config.url?.includes("/auth/login")) {
       return config;
@@ -51,7 +51,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor
@@ -62,7 +62,7 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
