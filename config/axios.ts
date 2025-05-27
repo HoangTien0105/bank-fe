@@ -8,9 +8,9 @@ const timeoutDuration = 60 * 1000;
 const axiosInstance = axios.create({
   baseURL: BASE_API_URL,
   timeout: timeoutDuration,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // Add a request interceptor
@@ -46,6 +46,10 @@ axiosInstance.interceptors.request.use(
       console.error("Error decoding token:", error);
     }
     config.headers.setAuthorization(`Bearer ${user.accessToken}`);
+
+    if (config.responseType !== "blob" && !config.headers["Content-Type"]) {
+      config.headers["Content-Type"] = "application/json";
+    }
 
     return config;
   },
