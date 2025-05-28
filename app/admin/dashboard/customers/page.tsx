@@ -1,11 +1,5 @@
 import { getAllCustomers } from "@/api/customer";
-import {
-  Box,
-  Flex,
-  Heading,
-
-  Table,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Table } from "@chakra-ui/react";
 import CreateCustomerDialog from "./_components/CreateCustomerDialog";
 import { CustomerPageProps } from "@/types/customer";
 import PaginationComponent from "@/components/common/Pagination";
@@ -33,11 +27,10 @@ const CustomersPage = async ({ searchParams = {} }: CustomerPageProps) => {
 
   return (
     <Box>
-      <Flex direction="column" justifyContent="space-between">
+      <Flex justifyContent="space-between">
         <Heading size="lg" mb={6}>
           All Customers
         </Heading>
-        <CreateCustomerDialog />
         <SearchForm
           initialValues={{
             keyword: params.keyword,
@@ -46,6 +39,8 @@ const CustomersPage = async ({ searchParams = {} }: CustomerPageProps) => {
             sortDirection: params.sortDirection,
           }}
         />
+
+        <CreateCustomerDialog />
       </Flex>
       <>
         <Table.Root size="sm">
@@ -77,10 +72,7 @@ const CustomersPage = async ({ searchParams = {} }: CustomerPageProps) => {
           </Table.Body>
         </Table.Root>
         {totalPages > 1 && (
-          <PaginationComponent
-            currentPage={page}
-            totalPages={totalPages}
-          />
+          <PaginationComponent currentPage={page} totalPages={totalPages} />
         )}
       </>
     </Box>

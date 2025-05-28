@@ -43,11 +43,11 @@ export const searchCustomer = async (search: string) => {
   }
 };
 
-export const createCustomer = async () => {
+export const createCustomer = async (payload: any) => {
   try {
-    const response = await axiosInstance.post("/customers");
+    const response = await axiosInstance.post("/customers", payload);
 
-    return response.data;
+    return response.data.response;
   } catch (error) {
     console.log(error);
     throw new Error("Create customer failed");
