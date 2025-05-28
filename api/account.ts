@@ -10,6 +10,8 @@ export const getAllAccounts = async (
       offset = 0,
       limit = 10,
       keyword,
+      balanceType,
+      accountType,
       sortBy,
       sortDirection,
     } = paginationParams;
@@ -19,6 +21,8 @@ export const getAllAccounts = async (
     params.append("limit", limit.toString());
 
     if (keyword) params.append("keyword", keyword);
+    if (balanceType) params.append("balanceType", balanceType);
+    if (accountType) params.append("accountType", accountType);
     if (sortBy) params.append("sortBy", sortBy);
     if (sortDirection) params.append("sortDirection", sortDirection);
     const response = await axiosInstance.get(`/accounts?${params.toString()}`);

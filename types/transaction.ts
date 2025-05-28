@@ -22,3 +22,15 @@ export interface DepositOrWithdrawRequest {
   location: string;
   amount: number;
 }
+
+export interface TransactionsPageProps {
+  searchParams?: {
+    page?: string;
+    keyword?: string;
+    location?: string;
+    minAmount?: string;
+    maxAmount?: string;
+    sortBy?: string;
+    sortDirection?: string;
+  };
+}

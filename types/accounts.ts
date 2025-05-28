@@ -7,6 +7,7 @@ export interface Accounts {
   openDate: string;
   interestRate: number;
   maturiryDate: string;
+  status: string;
   sourceAccount: string;
   savingScheduleDay: number;
   monthlyDepositAmount: number
@@ -17,4 +18,15 @@ export interface CreateSavingAccountRequest {
   amount: number;
   termMonths: number;
   monthlyDepositAmount?: number ;
+}
+
+export interface AccountPageProps {
+  searchParams?: {
+    page?: string;
+    keyword?: string;
+    balanceType?: string;
+    accountType?: string;
+    sortBy?: string;
+    sortDirection?: string;
+  };
 }

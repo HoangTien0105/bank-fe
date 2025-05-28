@@ -21,8 +21,6 @@ interface SearchFormProps {
   initialValues?: {
     keyword?: string;
     location?: string;
-    minAmount?: string;
-    maxAmount?: string;
     sortBy?: string;
     sortDirection?: string;
   };
@@ -31,8 +29,6 @@ interface SearchFormProps {
 interface FormValues {
   keyword: string;
   location: string;
-  minAmount: string;
-  maxAmount: string;
   sortBy: string;
   sortDirection: string;
 }
@@ -40,8 +36,6 @@ interface FormValues {
 const defaultValues: FormValues = {
   keyword: "",
   location: "",
-  minAmount: "",
-  maxAmount: "",
   sortBy: "",
   sortDirection: "ASC",
 };
@@ -58,40 +52,31 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
   const searchParams = useSearchParams();
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sync form values with URL params on mount and when searchParams change
   useEffect(() => {
     const urlValues: FormValues = {
       keyword: searchParams.get("keyword") || "",
       location: searchParams.get("location") || "",
-      minAmount: searchParams.get("minAmount") || "",
-      maxAmount: searchParams.get("maxAmount") || "",
       sortBy: searchParams.get("sortBy") || "",
       sortDirection: searchParams.get("sortDirection") || "ASC",
     };
-    
+
     setFormValues(urlValues);
   }, [searchParams]);
 
-  // Create new searchParams from formValues
-  const createQueryString = useCallback(
-    (values: FormValues) => {
-      const params = new URLSearchParams();
+  const createQueryString = useCallback((values: FormValues) => {
+    const params = new URLSearchParams();
 
-      if (values.keyword) params.set("keyword", values.keyword);
-      if (values.location) params.set("location", values.location);
-      if (values.minAmount) params.set("minAmount", values.minAmount);
-      if (values.maxAmount) params.set("maxAmount", values.maxAmount);
-      if (values.sortBy) params.set("sortBy", values.sortBy);
-      if (values.sortDirection && values.sortDirection !== "ASC") {
-        params.set("sortDirection", values.sortDirection);
-      }
+    if (values.keyword) params.set("keyword", values.keyword);
+    if (values.location) params.set("location", values.location);
+    if (values.sortBy) params.set("sortBy", values.sortBy);
+    if (values.sortDirection && values.sortDirection !== "ASC") {
+      params.set("sortDirection", values.sortDirection);
+    }
 
-      return params.toString();
-    },
-    []
-  );
+    return params.toString();
+  }, []);
 
-   const updateURLDebounced = useCallback(
+  const updateURLDebounced = useCallback(
     (values: FormValues, immediate = false) => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
@@ -137,9 +122,8 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
     [formValues, updateURLDebounced]
   );
 
-  // Handle search action
   const handleSearch = useCallback(() => {
-    updateURLDebounced(formValues);
+    updateURLDebounced(formValues, true);
   }, [formValues, updateURLDebounced]);
 
   // Clear search
@@ -159,7 +143,6 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
     setShowAdvanced((prev) => !prev);
   }, []);
 
-  // Handle Enter key
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
@@ -177,13 +160,20 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
   });
 
   // Create collections for selects
+  const locationLists = createListCollection({
+    items: [
+      { label: "All Location", value: "" },
+      { label: "Phú Nhuận", value: "Phú Nhuận" },
+      { label: "Bình Thạnh", value: "Bình Thạnh" },
+    ],
+  });
+
   const sortByOptions = createListCollection({
     items: [
       { label: "Default", value: "" },
-      { label: "Amount", value: "amount" },
-      { label: "Transaction Date", value: "transactionDate" },
-      { label: "Type", value: "type" },
-      { label: "Location", value: "location" },
+      { label: "Name", value: "name" },
+      { label: "Email", value: "email" },
+      { label: "Created Date", value: "createDate" },
     ],
   });
 
@@ -194,7 +184,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
     ],
   });
 
-  // End element for InputGroup
+
   const endElement = (
     <Flex alignItems="center" gap={1}>
       {formValues.keyword && (
@@ -239,102 +229,71 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
       userSelect="none"
     >
       <Flex mb={4} gap={2}>
-        <InputGroup
-          flex="1"
-          endElement={endElement}
-          bg="gray.800"
-          borderColor="gray.700"
-          _hover={{ borderColor: "gray.600" }}
-          rounded="xl"
-        >
+        <InputGroup flex="1" endElement={endElement}>
           <Input
             name="keyword"
-            placeholder="Enter description"
+            placeholder="Search accounts..."
             value={formValues.keyword}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            bg="transparent"
-            color="gray.100"
-            _placeholder={{ color: "gray.400" }}
-            border="none"
-            _focus={{ boxShadow: "none" }}
           />
         </InputGroup>
 
         {hasValues && (
           <Button
             variant="outline"
+            colorScheme="gray"
             onClick={clearSearch}
             size="md"
-            borderColor="gray.700"
-            color="gray.300"
-            _hover={{ bg: "gray.700" }}
           >
-            Clear All
+            Clear
           </Button>
         )}
       </Flex>
 
       {showAdvanced && (
         <Box
-          position="absolute"
-          top="100%"
-          left="0"
-          right="0"
-          mt={2}
-          p={6}
-          bg="gray.800"
           borderWidth="1px"
-          borderColor="gray.700"
-          rounded="2xl"
-          shadow="2xl"
-          backdropFilter="blur(12px)"
-          _before={{
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            bg: "linear-gradient(45deg, rgba(60,110,255,0.05), rgba(50,50,50,0.1))",
-            borderRadius: "2xl",
-            pointerEvents: "none",
-          }}
+          borderRadius="md"
+          p={4}
+          mb={4}
+          bg="white"
+          _dark={{ bg: "gray.800" }}
+          boxShadow="md"
         >
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={4}>
             <Field.Root>
               <Field.Label>Location</Field.Label>
-              <Input
+              <Select.Root
+                collection={locationLists}
                 name="location"
-                placeholder="Enter location"
-                value={formValues.location}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
-            </Field.Root>
-
-            <Field.Root>
-              <Field.Label>Min Amount</Field.Label>
-              <Input
-                name="minAmount"
-                type="number"
-                placeholder="Minimum amount"
-                value={formValues.minAmount}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
-            </Field.Root>
-
-            <Field.Root>
-              <Field.Label>Max Amount</Field.Label>
-              <Input
-                name="maxAmount"
-                type="number"
-                placeholder="Maximum amount"
-                value={formValues.maxAmount}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
+                value={formValues.location ? [formValues.location] : []}
+                onValueChange={(details) =>
+                  handleSelectChange("location", details)
+                }
+              >
+                <Select.HiddenSelect />
+                <Select.Control>
+                  <Select.Trigger>
+                    <Select.ValueText placeholder="Select account type" />
+                  </Select.Trigger>
+                  <Select.IndicatorGroup>
+                    <Select.Indicator />
+                  </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                  <Select.Positioner>
+                    <Select.Content>
+                      {locationLists.items.map((option) => (
+                        <Select.Item item={option} key={option.value}>
+                          {option.label}
+                          <Select.ItemIndicator />
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Positioner>
+                </Portal>
+              </Select.Root>
             </Field.Root>
 
             <Field.Root>
@@ -350,7 +309,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
                 <Select.HiddenSelect />
                 <Select.Control>
                   <Select.Trigger>
-                    <Select.ValueText placeholder="Select sort field" />
+                    <Select.ValueText placeholder="Sort by" />
                   </Select.Trigger>
                   <Select.IndicatorGroup>
                     <Select.Indicator />
@@ -376,9 +335,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
               <Select.Root
                 collection={sortDirectionOptions}
                 name="sortDirection"
-                value={
-                  formValues.sortDirection ? [formValues.sortDirection] : []
-                }
+                value={[formValues.sortDirection]}
                 onValueChange={(details) =>
                   handleSelectChange("sortDirection", details)
                 }
@@ -386,7 +343,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
                 <Select.HiddenSelect />
                 <Select.Control>
                   <Select.Trigger>
-                    <Select.ValueText placeholder="Select direction" />
+                    <Select.ValueText placeholder="Sort direction" />
                   </Select.Trigger>
                   <Select.IndicatorGroup>
                     <Select.Indicator />
@@ -408,11 +365,16 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
             </Field.Root>
           </SimpleGrid>
 
-          <Flex mt={4} justifyContent="space-between">
-            <Button variant="outline" onClick={clearSearch}>
-              Clear Filters
+          <Flex justifyContent="flex-end" gap={2}>
+            <Button
+              variant="outline"
+              colorScheme="gray"
+              onClick={clearSearch}
+              size="sm"
+            >
+              Clear All
             </Button>
-            <Button colorScheme="blue" onClick={handleSearch}>
+            <Button colorScheme="blue" onClick={handleSearch} size="sm">
               Apply Filters
             </Button>
           </Flex>

@@ -9,7 +9,6 @@ export async function getAdminStatsAction(
   endDate: string
 ): Promise<ApiResponse<AdminStatsData[]>> {
   const result = await getAdminStatsRange(startDate, endDate);
-  console.log(result);
   if (!result) {
     return {
       message: "Failed to fetch admin stats",
