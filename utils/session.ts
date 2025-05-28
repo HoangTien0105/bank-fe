@@ -22,13 +22,20 @@ export const updateSession = async (token: Partial<SessionToken>) => {
     expiresIn: token.expiresIn || session.user.expiresIn,
   };
 
-  return await signIn("credentials", {
+  await signIn("credentials", {
     ...updatedToken,
     redirect: false,
+  });
+};
+
+export const updateSessionV2 = async (token: Partial<SessionToken>) => {
+  await fetch("http://localhost:3000/api/auth/update-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(token),
   });
 };
 
 export const clearSession = async () => {
   await signOut();
 };
-
