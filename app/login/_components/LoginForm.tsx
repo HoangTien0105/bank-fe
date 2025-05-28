@@ -63,7 +63,7 @@ const LoginForm = () => {
     <form action={action}>
       <Stack className="flex flex-row justify-center max-w-4xl mx-auto border border-gray-700 rounded-lg shadow-lg bg-gray-900 overflow-hidden">
         <Flex className="p-8 flex-col flex-1 flex space-y-6 justify-center">
-          <Fieldset.Root className="mb-6" invalid={!!errors.username}>
+          <Fieldset.Root className="mb-6">
             <Fieldset.Legend>Sign in to your account</Fieldset.Legend>
             <Field.Root className="mb-6" invalid={!!errors.username}>
               <Field.Label>Username</Field.Label>
@@ -100,7 +100,10 @@ const LoginForm = () => {
 
           <Flex justify="center" mt={4}>
             <Text>Don't have an account? </Text>
-            <Link href="/register" className="text-blue-500 hover:text-blue-600 ml-1">
+            <Link
+              href="/register"
+              className="text-blue-500 hover:text-blue-600 ml-1"
+            >
               Register
             </Link>
           </Flex>

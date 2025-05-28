@@ -9,3 +9,13 @@ export interface CustomerProfile {
   customerType: string;
   role: string;
 }
+
+export interface CustomerPageProps {
+  searchParams?: {
+    page?: string;
+    keyword?: string;
+    location?: string;
+    sortBy?: string;
+    sortDirection?: string;
+  };
+}
