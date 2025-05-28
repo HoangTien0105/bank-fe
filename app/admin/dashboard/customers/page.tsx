@@ -1,6 +1,7 @@
 import { getAllCustomers } from "@/api/customer";
 import { Box, Flex, Heading, Table } from "@chakra-ui/react";
 import CreateCustomerDialog from "./_components/CreateCustomerDialog";
+import { formatDateTime } from "@/utils/date";
 
 const CustomersPage = async () => {
   const response = await getAllCustomers();
@@ -8,7 +9,7 @@ const CustomersPage = async () => {
 
   return (
     <Box>
-      <Flex direction="column" justifyContent="space-between">
+      <Flex justifyContent="space-between">
         <Heading size="lg" mb={6}>
           All Customers
         </Heading>
@@ -36,7 +37,7 @@ const CustomersPage = async () => {
               <Table.Cell>{item.citizenId}</Table.Cell>
               <Table.Cell>{item.phone}</Table.Cell>
               <Table.Cell>{item.address}</Table.Cell>
-              <Table.Cell>{item.createDate}</Table.Cell>
+              <Table.Cell>{formatDateTime(item.createDate)}</Table.Cell>
               <Table.Cell>{item.customerType}</Table.Cell>
             </Table.Row>
           ))}
