@@ -1,10 +1,9 @@
 import { Box, Card, Flex, Heading, Text } from "@chakra-ui/react";
 import StatsCharts from "../_components/StatsChart";
-import { getTotalStats } from "../action";
+import { getTotalStatsApi } from "@/api/adminStats";
 
 const DashboardPage = async () => {
-  const response = await getTotalStats();
-  const adminTotalStats = response.response;
+  const adminTotalStats = await getTotalStatsApi();
 
   return (
     <Box className="">
