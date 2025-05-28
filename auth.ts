@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login, logout } from "./api/auth";
+import { login, logout, refreshTokenV2 } from "./api/auth";
 import { LoginSchema } from "./app/login/_types/login";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -17,26 +17,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         username: {},
         password: {},
+        accessToken: {},
+        refreshToken: {},
+        tokenType: {},
+        expiresIn: {},
       },
       authorize: async (credentials) => {
-        try {
-          const validationResult =
-            await LoginSchema.safeParseAsync(credentials);
-          if (!validationResult.success) {
-            console.error("Sign in validation eror");
+        if (credentials?.username && credentials?.password) {
+          try {
+            const validationResult =
+              await LoginSchema.safeParseAsync(credentials);
+            if (!validationResult.success) {
+              console.error("Sign in validation eror");
+              return null;
+            }
+
+            console.log("Auth validation result data:", validationResult.data);
+
+            const data = await login(validationResult.data);
+
+            if (data?.success) {
+              return data?.response;
+            }
+          } catch (error) {
+            console.error("NextAuth authorize error", error);
             return null;
           }
+        }
 
-          console.log("Auth validation result data:", validationResult.data);
-
-          const data = await login(validationResult.data);
-
-          if (data?.success) {
-            return data?.response;
-          }
-        } catch (error) {
-          console.error("NextAuth authorize error", error);
-          return null;
+        if (credentials?.accessToken && credentials?.refreshToken) {
+          return {
+            accessToken: credentials.accessToken,
+            refreshToken: credentials.refreshToken,
+            tokenType: credentials.tokenType || "Bearer",
+            expiresIn: credentials.expiresIn || 3600,
+          };
         }
       },
     }),
@@ -60,7 +75,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signOut() {
-      // const token = "token" in event ? event.token : null;
       try {
         const result = await logout();
 

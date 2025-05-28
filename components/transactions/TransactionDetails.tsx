@@ -25,12 +25,12 @@ const TransactionDetail = ({
   transaction,
 }: TransactionDetailsDialogProps) => {
   return (
-    <Dialog.Root open={isOpen}>
+    <Dialog.Root open={isOpen} >
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content maxW="2xl">
           <Dialog.Header>
-            <Heading size="md">Transactions details</Heading>
+            <Heading size="md" userSelect="none">Transactions details</Heading>
             <DialogCloseTrigger asChild>
               <Button variant="ghost" size="sm" onClick={onClose}>
                 <LuX />
@@ -40,7 +40,7 @@ const TransactionDetail = ({
 
           <Dialog.Body>
             {transaction ? (
-              <Card.Root>
+              <Card.Root userSelect="none">
                 <Card.Body>
                   <Grid templateColumns="1fr 1fr" gap={4}>
                     <Box>

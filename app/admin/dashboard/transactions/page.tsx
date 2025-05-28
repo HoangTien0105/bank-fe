@@ -1,44 +1,58 @@
 import { getAllTransactions } from "@/api/transaction";
-import { formatDateTime } from "@/utils/date";
-import { Box, Heading, Table } from "@chakra-ui/react";
+import SearchForm from "@/components/transactions/SearchForm";
+import TransactionsList from "@/components/transactions/TransactionsList";
+import { TransactionsPageProps } from "@/types/transaction";
+import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { Suspense } from "react";
 
-const TransactionsPage = async () => {
-  const response = await getAllTransactions();
-  const items = response.results;
+const TransactionsPage = async ({
+  searchParams = {},
+}: TransactionsPageProps) => {
+  const params = await searchParams;
+  const page = params.page ? parseInt(params.page) : 1;
+  const itemsPerPage = 8;
+  const offset = (page - 1) * itemsPerPage;
+
+  const apiParams = {
+    offset,
+    limit: itemsPerPage,
+    keyword: params.keyword,
+    location: params.location,
+    minAmount: params.minAmount ? parseFloat(params.minAmount) : undefined,
+    maxAmount: params.maxAmount ? parseFloat(params.maxAmount) : undefined,
+    sortBy: params.sortBy,
+    sortDirection: params.sortDirection as "ASC" | "DESC" | undefined,
+  };
+
+  const response = await getAllTransactions(apiParams);
+  const transactions = response?.results || [];
+  const totalItems = response?.totalRows || 0;
+  const totalPages = response?.totalPages || 1;
 
   return (
-    <Box>
-      <Heading size="lg" mb={6}>
-        All Transactions
-      </Heading>
-      <Table.Root size="sm">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>ID</Table.ColumnHeader>
-            <Table.ColumnHeader>Type</Table.ColumnHeader>
-            <Table.ColumnHeader>Amount</Table.ColumnHeader>
-            <Table.ColumnHeader>Transaction Date</Table.ColumnHeader>
-            <Table.ColumnHeader>Fee</Table.ColumnHeader>
-            <Table.ColumnHeader>Location</Table.ColumnHeader>
-            <Table.ColumnHeader>Description</Table.ColumnHeader>
-            <Table.ColumnHeader>Created Date</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {items.map((item) => (
-            <Table.Row key={item.id}>
-              <Table.Cell>{item.id}</Table.Cell>
-              <Table.Cell>{item.type}</Table.Cell>
-              <Table.Cell>{item.amount}</Table.Cell>
-              <Table.Cell>{formatDateTime(item.transactionDate)}</Table.Cell>
-              <Table.Cell>{item.fee || "N/A"}</Table.Cell>
-              <Table.Cell>{item.location}</Table.Cell>
-              <Table.Cell>{item.description}</Table.Cell>
-              <Table.Cell>{formatDateTime(item.createDate)}</Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+    <Box p={6}>
+      <Flex direction="column" gap={6}>
+        <Suspense fallback={<Spinner size="xl" />}>
+          <SearchForm
+            initialValues={{
+              keyword: params.keyword,
+              location: params.location,
+              minAmount: params.minAmount,
+              maxAmount: params.maxAmount,
+              sortBy: params.sortBy,
+              sortDirection: params.sortDirection,
+            }}
+          />
+
+          <TransactionsList
+            title="Transaction History"
+            transactions={transactions}
+            totalItems={totalItems}
+            totalPages={totalPages}
+            currentPage={page}
+          />
+        </Suspense>
+      </Flex>
     </Box>
   );
 };

@@ -1,5 +1,6 @@
 import { getAllCustomers } from "@/api/customer";
-import { Box, Heading, Table } from "@chakra-ui/react";
+import { Box, Flex, Heading, Table } from "@chakra-ui/react";
+import CreateCustomerDialog from "./_components/CreateCustomerDialog";
 
 const CustomersPage = async () => {
   const response = await getAllCustomers();
@@ -7,9 +8,12 @@ const CustomersPage = async () => {
 
   return (
     <Box>
-      <Heading size="lg" mb={6}>
-        All Customers
-      </Heading>
+      <Flex direction="column" justifyContent="space-between">
+        <Heading size="lg" mb={6}>
+          All Customers
+        </Heading>
+        <CreateCustomerDialog />
+      </Flex>
       <Table.Root size="sm">
         <Table.Header>
           <Table.Row>

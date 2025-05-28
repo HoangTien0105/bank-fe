@@ -30,7 +30,6 @@ interface TransactionsListProps {
   customerId?: string;
   title?: string;
   showSearch?: boolean;
-  variant?: "customer" | "admin";
   onPageChange?: (page: number) => void;
 }
 
@@ -43,7 +42,6 @@ const TransactionsList = ({
   customerId,
   title = "Transactions list",
   showSearch = true,
-  variant = "customer",
   onPageChange,
 }: TransactionsListProps) => {
   const router = useRouter();
@@ -81,8 +79,8 @@ const TransactionsList = ({
   return (
     <Box
       w="full"
-      maxW={variant === "customer" ? "4xl" : "full"}
-      margin={variant === "customer" ? "auto" : "0"}
+      maxW={"full"}
+      margin={"auto"}
     >
       <Flex
         justifyContent="space-between"
@@ -91,7 +89,7 @@ const TransactionsList = ({
         flexWrap="wrap"
         gap={3}
       >
-        <Heading size="md">{title}</Heading>
+        <Heading size="md" userSelect="none">{title}</Heading>
       </Flex>
       {isLoading ? (
         <Flex justifyContent="center" my={10}>
@@ -109,8 +107,9 @@ const TransactionsList = ({
             overflow="hidden"
             boxShadow="sm"
             position="relative"
+            userSelect="none"
           >
-            <Table.ScrollArea borderWidth="1px" maxW="4xl">
+            <Table.ScrollArea borderWidth="1px" maxW="full">
               <Table.Root size="lg">
                 <Table.Header
                   position="sticky"
@@ -120,7 +119,7 @@ const TransactionsList = ({
                   boxShadow="sm"
                   suppressHydrationWarning
                 >
-                  <Table.Row>
+                  <Table.Row userSelect="none">
                     <Table.ColumnHeader>ID</Table.ColumnHeader>
                     <Table.ColumnHeader>Type</Table.ColumnHeader>
                     <Table.ColumnHeader minWidth={"150px"}>

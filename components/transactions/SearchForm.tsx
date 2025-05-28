@@ -125,7 +125,6 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
     [formValues, updateURLDebounced]
   );
 
-  // Handle select change
   const handleSelectChange = useCallback(
     (name: string, details: { value: string[] }) => {
       const newValues = {
@@ -150,14 +149,12 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
     router.push(pathname, { scroll: false });
   }, [router, pathname]);
 
-  // Clear individual field (for keyword X button)
   const clearKeyword = useCallback(() => {
     const newValues = { ...formValues, keyword: "" };
     setFormValues(newValues);
     updateURLDebounced(newValues);
   }, [formValues, updateURLDebounced]);
 
-  // Toggle advanced filters
   const toggleAdvanced = useCallback(() => {
     setShowAdvanced((prev) => !prev);
   }, []);
@@ -239,6 +236,7 @@ const SearchForm = ({ initialValues }: SearchFormProps) => {
       margin="auto"
       position="relative"
       zIndex="10"
+      userSelect="none"
     >
       <Flex mb={4} gap={2}>
         <InputGroup

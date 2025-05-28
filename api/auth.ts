@@ -1,4 +1,6 @@
 import axiosInstance from "@/config/axios";
+import { BASE_API_URL } from "@/constant/api";
+import axios from "axios";
 
 export const login = async (payload: {
   username: string;
@@ -13,15 +15,29 @@ export const login = async (payload: {
   }
 };
 
-export const refreshToken = async (payload: any) => {
+export const refreshToken = async () => {
   try {
-    const response = await axiosInstance.post("/auth/refreshToken", payload);
-    return response.data;
+    const response = await axiosInstance.post("/auth/refreshToken");
+    return response.data.response;
   } catch (error) {
     console.log(error);
     throw new Error("Refresh token failed");
   }
 };
+
+export async function refreshTokenV2(refreshToken: string) {
+  const response = await axios.post(
+    `${BASE_API_URL}/auth/refreshToken`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    },
+  );
+
+  return response.data.response;
+}
 
 export const logout = async () => {
   try {
